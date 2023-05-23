@@ -13,7 +13,11 @@ function App() {
         {routes.map((route, index) => {
           const Layout = route.layout ? route.layout : null;
 
-          const element = Layout ? <Layout>{route.e}</Layout> : route.element;
+          const element = Layout ? (
+            <Layout>{route.element}</Layout>
+          ) : (
+            route.element
+          );
 
           return route.type === 'public' || isSignedIn ? (
             <Route key={`page-${index}`} path={route.path} element={element} />
