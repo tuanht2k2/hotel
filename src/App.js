@@ -1,9 +1,12 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import routes from './routes';
 
 import './App.css';
+import { useState } from 'react';
 
 function App() {
+  const [isSignedIn, setIsSignedIn] = useState(false);
+
   return (
     <BrowserRouter>
       <Routes>
@@ -12,8 +15,14 @@ function App() {
 
           const element = Layout ? <Layout>{route.e}</Layout> : route.element;
 
-          return (
+          return route.type === 'public' || isSignedIn ? (
             <Route key={`page-${index}`} path={route.path} element={element} />
+          ) : (
+            <Route
+              key={`page-${index}`}
+              path={route.path}
+              element={<Navigate to="/signin" />}
+            />
           );
         })}
       </Routes>
