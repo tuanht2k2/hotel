@@ -1,0 +1,65 @@
+:root {
+  --room-text-color-1: rgb(255, 132, 0);
+}
+
+.room--wrapper {
+  width: 100%;
+  height: 100%;
+  background-color: var(--gray2);
+  padding: 20px 30px;
+
+  & * {
+    color: var(--text-color-10);
+  }
+}
+
+.room__header__hotel--name {
+  font-family: EncodeSans-Bold;
+  user-select: none;
+}
+
+.room__header__room--name {
+  display: flex;
+  align-items: center;
+
+  & * {
+    font-family: EncodeSans-SemiBold;
+    font-size: 20px;
+  }
+}
+
+// .room__header__room--name__label {
+// }
+
+.room__header__room--name__title {
+  margin-left: 10px;
+  color: var(--room-text-color-1);
+}
+
+.room__info--wrapper {
+  padding: 20px 0;
+  display: flex;
+  align-items: center;
+}
+
+.room__info__img--wrapper {
+  flex: 1;
+  height: fit-content;
+  background-color: rgb(0, 0, 0);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+}
+
+.room__info__img--tag {
+  width: 100%;
+  object-fit: contain;
+}
+
+.room__info__detail--wrapper {
+  flex: 1;
+}
+
+.room__interaction--wrapper {
+}
