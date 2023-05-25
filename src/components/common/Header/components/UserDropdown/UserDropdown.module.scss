@@ -1,0 +1,38 @@
+.sidebar__item__tippy--dropdown-wrapper {
+  padding: 10px;
+  background-color: var(--primary-color);
+  border-radius: 0 0 10px 10px;
+}
+
+.tippy--dropdown__item--link {
+  width: 100%;
+  padding: 10px;
+  display: flex;
+  align-items: center;
+  transition: 0.3s;
+  border-radius: 10px;
+
+  &:hover {
+    background-color: var(--primary-hover-color);
+  }
+}
+
+.tippy--dropdown__item__icon--wrapper {
+  height: 30px;
+  width: 30px;
+  font-size: 15px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  & * {
+    color: var(--menu-text-color-1);
+  }
+}
+
+.tippy--dropdown__item__title {
+  margin-left: 10px;
+  font-family: Encodesans-Semibold;
+  font-size: 15px;
+  color: var(--menu-text-color-1);
+}

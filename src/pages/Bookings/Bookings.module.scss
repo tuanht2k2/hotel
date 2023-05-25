@@ -1,0 +1,22 @@
+:root {
+  --image-height: 200px;
+
+  --value-color-1: rgb(255, 55, 0);
+  --value-color-2: rgb(235, 121, 14);
+}
+
+.bookings--wrapper {
+  position: relative;
+  padding: 2px 30px;
+  background-color: var(--gray-1);
+}
+
+.bookings__selector--wrapper {
+  z-index: 9998;
+  position: sticky;
+  top: 52px;
+  left: 0;
+  box-shadow: var(--box-shadow-1);
+  border-radius: 10px;
+  overflow: hidden;
+}
