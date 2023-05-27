@@ -70,7 +70,7 @@ function Image() {
             to={'/home'}
             className={cx('image--control__left--brand--icon--wrapper')}
           >
-            <img className={cx('logo-img')} src={images.logo} />
+            <img className={cx('logo--img')} src={images.logo} />
           </Link>
         </div>
         <div className={cx('image--control__right')}>

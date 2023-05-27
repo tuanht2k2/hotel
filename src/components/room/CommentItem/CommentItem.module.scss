@@ -1,0 +1,32 @@
+.comment--wrapper {
+  width: 100%;
+  display: flex;
+
+  .comment__user__img {
+    height: 40px;
+    width: 40px;
+  }
+
+  .comment__user--main {
+    margin-left: 20px;
+    .comment__user--main__rating {
+      margin-left: -10px;
+    }
+
+    .comment__user--main__user__name {
+      margin-bottom: -5px;
+      font-size: 16px;
+      font-family: EncodeSans-SemiBold;
+    }
+
+    .comment__user--main__text {
+      font-size: 18px;
+    }
+
+    .comment__user--main__time {
+      font-size: 12px;
+      font-family: EncodeSans-SemiBold;
+      color: var(--text-color-7);
+    }
+  }
+}

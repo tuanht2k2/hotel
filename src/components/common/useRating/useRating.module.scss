@@ -1,0 +1,48 @@
+.star-rating {
+  padding: 0 10px;
+
+  button {
+    background-color: transparent;
+    border: none;
+    outline: none;
+    cursor: pointer;
+
+    &.on {
+      color: #efab2e;
+    }
+
+    &.off {
+      color: #ccc;
+    }
+
+    .star {
+      font-size: 20px;
+    }
+  }
+
+  .value {
+    margin-left: 10px;
+    font-size: 15px;
+    font-family: EncodeSans-Semibold;
+
+    &.very-bad {
+      color: red;
+    }
+
+    &.bad {
+      color: orangered;
+    }
+
+    &.normal {
+      color: orange;
+    }
+
+    &.good {
+      color: rgb(7, 159, 7);
+    }
+
+    &.very-good {
+      color: rgb(112, 220, 5);
+    }
+  }
+}
