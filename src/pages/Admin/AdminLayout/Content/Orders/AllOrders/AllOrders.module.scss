@@ -1,0 +1,16 @@
+.all__order--container {
+  .all__order--header {
+    background-color: #f8f9fb;
+    padding: 20px 40px;
+  }
+  .all__order--body {
+    margin : 40px 40px 0 40px;
+    padding: 10px;
+    box-shadow:
+    /* offset-x | offset-y | blur-radius | spread-radius | color */ 0px
+        2px 2px 0px hsla(0, 0%, 0%, 0.14),
+      0px 3px 1px -2px hsla(0, 0%, 0%, 0.12),
+      0px 1px 5px 0px hsla(0, 0%, 0%, 0.2);
+      border-radius: 30px;
+  }
+}

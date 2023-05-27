@@ -1,48 +1,27 @@
-import { Form, InputNumber, Popconfirm, Table, Typography, Input } from "antd";
-import { useState } from "react";
+import {
+  Form,
+  InputNumber,
+  Popconfirm,
+  Table,
+  Typography,
+  Input,
+  AutoComplete,
+  Row,
+  Col,
+  Select,
+  Button,
+} from "antd";
+import { useEffect, useState } from "react";
+import classNames from "classnames/bind";
+import styles from "./AllProducts.module.scss";
+import Title from "antd/es/typography/Title";
+import {
+  handleGetData,
+  handleUpdateData,
+} from "../../../../../../utils/database";
 
-const originData = [
-  {
-    key: "1",
-    r_id : 'rid 1',
-    r_image : 'image 1',
-    r_name: "Room Tuan",
-    r_desc: 'Room Desc',
-    r_type : 'Single',
-    r_amenity : 'Amenity',
-    r_price : 200000,
-  },
-  {
-    key: "2",
-    r_id : 'rid 2',
-    r_image : 'image 2',
-    r_name: "Room Tuan",
-    r_desc: 'Room Desc',
-    r_type : 'Single',
-    r_amenity : 'Amenity',
-    r_price : 200000,
-  },
-  {
-    key: "3",
-    r_id : 'rid 3',
-    r_image : 'image 3',
-    r_name: "Room Tuan",
-    r_desc: 'Room Desc',
-    r_type : 'Single',
-    r_amenity : 'Amenity',
-    r_price : 200000,
-  },
-  {
-    key: "4",
-    r_id : 'rid 4',
-    r_image : 'image 4',
-    r_name: "Room Tuan",
-    r_desc: 'Room Desc',
-    r_type : 'Single',
-    r_amenity : 'Amenity',
-    r_price : 200000,
-  },
-];
+let cx = classNames.bind(styles);
+
 const EditableCell = ({
   editing,
   dataIndex,
@@ -77,11 +56,90 @@ const EditableCell = ({
     </td>
   );
 };
+
 const AllRooms = () => {
   const [form] = Form.useForm();
-  const [data, setData] = useState(originData);
+  const [data, setData] = useState([]);
   const [editingKey, setEditingKey] = useState("");
-  const isEditing = (record) => record.key === editingKey;
+  const [options, setOptions] = useState([]);
+  const [roomIds, setRoomIds] = useState([]);
+  const [changeData, setChangeData] = useState([]);
+
+  const getListRooms = async () => {
+    try {
+      const listRooms = await handleGetData("/admin/create-room/rooms");
+      const dataRooms = [];
+      const listKeys = [];
+      for (let key in listRooms.val()) {
+        dataRooms.push(listRooms.val()[key]);
+        listKeys.push(key);
+      }
+      setData([...dataRooms]);
+      setChangeData([...dataRooms]);
+      setRoomIds([...listKeys]);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const searchResult = (query, listRooms) => {
+    const results = [];
+    listRooms.forEach((_, idx) => {
+      if (_.r_name.toLowerCase().includes(query)) {
+        results.push({
+          value: _.r_name,
+          label: (
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+              }}
+            >
+              <span>
+                Found {query} on{" "}
+                <a href={`/`} target="_blank" rel="noopener noreferrer">
+                  {_.r_name}
+                </a>
+              </span>
+              <span>results</span>
+            </div>
+          ),
+        });
+      }
+    });
+    return results;
+  };
+  const onChangeRoom = (value) => {
+    const results = changeData.filter((room) => {
+      if(!value) {
+        return room;
+      }
+      console.log(room);
+      if (room.r_type.toLowerCase() === value || room.status.toLowerCase() === value) {
+        return true;
+      }
+    });
+    setData(results);
+  };
+
+  useEffect(() => {
+    getListRooms();
+  }, [editingKey]);
+
+  const handleSearch = (value) => {
+    console.log(searchResult(value, data));
+    setOptions(value ? searchResult(value, data) : []);
+  };
+  const onSelect = (value) => {
+    console.log("onSelect", value);
+  };
+
+  const onSearch = (value) => {
+    console.log("search:", value);
+  };
+  const isEditing = (record = {}) => {
+    return record.key === editingKey;
+  };
   const edit = (record) => {
     form.setFieldsValue({
       roomImage: "",
@@ -107,7 +165,10 @@ const AllRooms = () => {
           ...item,
           ...row,
         });
-        setData(newData);
+        await handleUpdateData(
+          `/admin/create-room/rooms/${roomIds[index]}`,
+          newData[index]
+        );
         setEditingKey("");
       } else {
         newData.push(row);
@@ -185,6 +246,7 @@ const AllRooms = () => {
       },
     },
   ];
+
   const mergedColumns = columns.map((col) => {
     if (!col.editable) {
       return col;
@@ -192,7 +254,6 @@ const AllRooms = () => {
     return {
       ...col,
       onCell: (record) => {
-        console.log(record);
         return {
           record,
           // inputType: col.dataIndex === "age" ? "number" : "text",
@@ -204,27 +265,91 @@ const AllRooms = () => {
     };
   });
   return (
-    <Form form={form} component={false}>
-      <Table
-        components={{
-          body: {
-            cell: EditableCell,
-          },
-        }}
-        bordered
-        dataSource={data}
-        columns={mergedColumns}
-        rowClassName="editable-row"
-        pagination={{
-          onChange: cancel,
-        }}
-      />
-    </Form>
+    <div className={cx("all__rooms--container")}>
+      <Row>
+        <Col span={24}>
+          <Title level={3}>Manage All Room Information</Title>
+        </Col>
+      </Row>
+      <div className={cx("all__rooms--title")}>
+        <Row>
+          <Col span={8} style={{ marginRight: "20px" }}>
+            <Title level={5}>What are you looking for ?</Title>
+            <AutoComplete
+              style={{
+                width: "100%",
+              }}
+              options={options}
+              onSelect={onSelect}
+              onSearch={handleSearch}
+              notFoundContent={"Not found room"}
+              allowClear={true}
+              placeholder="Type to find room by room name"
+            >
+            </AutoComplete>
+          </Col>
+
+          <Col span={6} style={{ marginRight: "20px" }}>
+            <Title level={5}>Room Type</Title>
+            <Select
+              style={{ width: "100%" }}
+              showSearch
+              placeholder="Select room type"
+              optionFilterProp="children"
+              onChange={onChangeRoom}
+              onSearch={onSearch}
+              filterOption={(input, option) =>
+                (option?.label ?? "")
+                  .toLowerCase()
+                  .includes(input.toLowerCase())
+              }
+              allowClear={true}
+              options={[
+                {
+                  value: "single",
+                  label: "Single",
+                },
+                {
+                  value: "double",
+                  label: "Double",
+                },
+              ]}
+            />
+          </Col>
+         
+          <Col span={2} style={{ alignSelf: "flex-end" }}>
+            <Button
+              style={{
+                width: "100%",
+                backgroundColor: "#1677ff",
+                color: "#fff",
+              }}
+            >
+              Search
+            </Button>
+          </Col>
+        </Row>
+      </div>
+      <div className={cx("all__rooms--form")}>
+        <Title level={5}>Room Summary</Title>
+        <Form form={form} component={false}>
+          <Table
+            components={{
+              body: {
+                cell: EditableCell,
+              },
+            }}
+            bordered
+            dataSource={data}
+            columns={data && mergedColumns}
+            rowClassName="editable-row"
+            pagination={{
+              onChange: cancel,
+            }}
+          />
+        </Form>
+      </div>
+    </div>
   );
 };
 export default AllRooms;
-// .editable-row .ant-form-item-explain {
-//   position: absolute;
-//   top: 100%;
-//   font-size: 12px;
-// }
