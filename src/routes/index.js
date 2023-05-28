@@ -11,18 +11,18 @@ const routes = [
   { path: "/home", type: "public", element: <Home />, layout: DefaultLayout },
   {
     path: '/bookings',
-    type: 'public',
+    type: 'private',
     element: <Bookings />,
     layout: DefaultLayout,
   },
   {
-    path: '/room/:roomId',
+    path: '/rooms/:roomId',
     type: 'public',
     element: <Room />,
     layout: DefaultLayout,
   },
-  { path: "/signin", type: "public", element: <SignIn /> },
-  { path: "/signup", type: "public", element: <SignUp /> },
+  { path: "/sign-in", type: "public", element: <SignIn /> },
+  { path: "/sign-up", type: "public", element: <SignUp /> },
   {
     path: "/admin/all-rooms",
     type: "public",

@@ -5,7 +5,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: var(--black);
+  background-color: black;
   overflow: hidden;
 }
 
@@ -27,8 +27,8 @@
 }
 
 .image--control__left__icon--wrapper {
-  height: 40px;
-  width: 40px;
+  height: 48px;
+  width: 48px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -38,7 +38,7 @@
   cursor: pointer;
 
   & * {
-    color: var(--white);
+    color: white;
   }
 }
 
@@ -47,6 +47,12 @@
   height: 48px;
   width: 48px;
   cursor: pointer;
+}
+
+.logo--img {
+  height: 100%;
+  width: 100%;
+  border-radius: 50%;
 }
 
 .image--control__right {
@@ -58,7 +64,7 @@
   font-size: 20px;
 
   & * {
-    color: var(--gray2);
+    color: var(--gray-2);
   }
 
   & + & {
@@ -69,7 +75,7 @@
     cursor: no-drop;
 
     & * {
-      color: var(--gray1);
+      color: var(--gray-1);
     }
   }
 }

@@ -21,6 +21,7 @@ export const handlePushData = (path, data) => {
 };
 
 export const handleSetData = (path, data) => {
+  console.log(path, data);
   return set(ref(database, path), data);
 };
 

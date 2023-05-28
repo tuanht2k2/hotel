@@ -10,8 +10,9 @@ import {
   Row,
   Select,
   Upload,
+  Modal,
+  message,
 } from "antd";
-import { Option } from "antd/es/mentions";
 import { Typography } from "antd";
 
 import { useState } from "react";
@@ -19,6 +20,7 @@ import classNames from "classnames/bind";
 import styles from "./AddRoom.module.scss";
 import { handlePushData } from "../../../../../../utils/database";
 import { v4 as uuidv4 } from "uuid";
+import uploadFile from "../../../../../../utils/storage";
 const { Title, Text } = Typography;
 
 let cx = classNames.bind(styles);
@@ -31,20 +33,91 @@ const normFile = (e) => {
   return e?.fileList;
 };
 
-// handlePushData("/admin/create-room/rooms", {
-//   key: uuidv4(),
-//   r_image: "image 10",
-//   r_name: "Room 10",
-//   r_desc: ["Room Descsd", "Room Desc 10"],
-//   r_type: "Single",
-//   r_amenity: "Amenity 10",
-//   r_price: 300000,
-// }).then((data) => {
-//   console.log(data);
-// });
+// y
+const getBase64 = (file) =>
+  new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = (error) => reject(error);
+  });
+
+const beforeUpload = (file) => {
+  const isJpgOrPng = file.type === "image/jpeg" || file.type === "image/png";
+
+  if (!isJpgOrPng) {
+    message.error("You can only upload JPG/PNG file!");
+  }
+
+  const isLt2M = file.size / 1024 / 1024 < 2;
+
+  if (!isLt2M) {
+    message.error("Image must smaller than 2MB!");
+  }
+
+  return isJpgOrPng && isLt2M;
+};
 
 const AddRoom = () => {
   const [componentDisabled, setComponentDisabled] = useState(false);
+  const [previewOpen, setPreviewOpen] = useState(false);
+  const [previewImage, setPreviewImage] = useState("");
+  const [previewTitle, setPreviewTitle] = useState("");
+  const [fileList, setFileList] = useState([]);
+
+  const handleCancel = () => setPreviewOpen(false);
+  const handlePreview = async (file) => {
+    if (!file.url && !file.preview) {
+      file.preview = await getBase64(file.originFileObj);
+    }
+    setPreviewImage(file.url || file.preview);
+    setPreviewOpen(true);
+    setPreviewTitle(
+      file.name || file.url.substring(file.url.lastIndexOf("/") + 1)
+    );
+  };
+
+  const dummyRequest = ({ file, onSuccess }) => {
+    setTimeout(() => {
+      onSuccess("ok");
+    }, 0);
+  };
+  const uploadButton = (
+    <div>
+      <PlusOutlined />
+      <div
+        style={{
+          marginTop: 8,
+        }}
+      >
+        Upload room image
+      </div>
+    </div>
+  );
+
+  const handleChange = async ({ fileList: newFileList }) => {
+    setFileList(newFileList);
+  };
+
+  const onFinish = async (value) => {
+    try {
+      const listImage = [];
+      await fileList.forEach(async (fileImage, index) => {
+        const res = await uploadFile(
+          `/rooms/${fileImage?.originFileObj.name}`,
+          fileImage.originFileObj
+        );
+        await listImage.push({ imageId: uuidv4(), imageUrl: res });
+        value.roomImage = listImage;
+        if (index === fileList.length - 1) {
+          value.roomCreatedAt = JSON.stringify(new Date());
+          handlePushData("/admin/create-room/rooms", value);
+        }
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  };
   return (
     <div className={cx("add__room--container")}>
       <div className={cx("add__room--title")}>
@@ -101,21 +174,23 @@ const AddRoom = () => {
                 style={{
                   maxWidth: "100%",
                 }}
+                onFinish={onFinish}
+                name="formName"
               >
                 <Row>
                   <Col span={18}>
-                    <Form.Item required label="Room Name">
-                      <Input />
+                    <Form.Item required name={"roomName"} label="Room Name">
+                      <Input name="roomName" />
                     </Form.Item>
-                    <Form.Item required label="Room Type">
-                      <Radio.Group>
+                    <Form.Item required name={"roomType"} label="Room Type">
+                      <Radio.Group name="roomType">
                         <Radio value="single"> Single </Radio>
                         <Radio value="double"> Double </Radio>
                       </Radio.Group>
                     </Form.Item>
                     <Form.Item
                       required
-                      name="select-multiple"
+                      name="roomAmenity"
                       label="Room Amenity"
                       rules={[
                         {
@@ -129,26 +204,46 @@ const AddRoom = () => {
                         mode="multiple"
                         placeholder="Please select favourite colors"
                       >
-                        <Option value="red">Red</Option>
-                        <Option value="green">Green</Option>
-                        <Option value="blue">Blue</Option>
+                        <Select.Option value="red">Red</Select.Option>
+                        <Select.Option value="green">Green</Select.Option>
+                        <Select.Option value="blue">Blue</Select.Option>
                       </Select>
+                    </Form.Item>
+                    <Form.Item required name={"roomRank"} label="Room Rank">
+                      <Radio.Group name="roomRank">
+                        <Radio value="normal">Normal</Radio>
+                        <Radio value="superior"> Superior </Radio>
+                      </Radio.Group>
                     </Form.Item>
                     <Row>
                       <Col span={6}>
-                        <Form.Item required label="Create at">
-                          <DatePicker style={{ width: "80%" }} />
+                        <Form.Item
+                          required
+                          name={"roomCreatedAt"}
+                          label="Create at"
+                        >
+                          <DatePicker
+                            name="roomCreatedAt"
+                            style={{ width: "80%" }}
+                          />
                         </Form.Item>
                       </Col>
                       <Col span={6}>
-                        <Form.Item required label="Room Price">
-                          <InputNumber style={{ width: "100%" }} />
+                        <Form.Item
+                          required
+                          label="Room Price"
+                          name={"roomPrice"}
+                        >
+                          <InputNumber
+                            style={{ width: "100%" }}
+                            name="roomPrice"
+                          />
                         </Form.Item>
                       </Col>
                     </Row>
 
-                    <Form.Item label="Room Description">
-                      <TextArea rows={4} />
+                    <Form.Item name={"roomDesc"} label="Room Description">
+                      <TextArea name="roomDesc" rows={4} />
                     </Form.Item>
                     <Row>
                       <Col
@@ -167,45 +262,53 @@ const AddRoom = () => {
                       valuePropName="fileList"
                       getValueFromEvent={normFile}
                       style={{ width: "100%" }}
+                      name={"roomImage"}
                     >
                       <Upload
-                        className={cx("add__room--upload")}
-                        action="/upload.do"
                         listType="picture-card"
+                        fileList={fileList}
+                        onPreview={handlePreview}
+                        onChange={handleChange}
+                        name="roomImage"
+                        beforeUpload={beforeUpload}
+                        customRequest={dummyRequest}
                       >
-                        <div>
-                          <PlusOutlined />
-                          <div
-                            style={{
-                              marginTop: 8,
-                            }}
-                          >
-                            Upload Image
-                          </div>
-                        </div>
+                        {fileList.length >= 8 ? null : uploadButton}
                       </Upload>
                     </Form.Item>
-                    <Row>
-                      <Col span={24}>
-                        <Col span={12}>
-                          <Checkbox
-                            checked={componentDisabled}
-                            onChange={(e) =>
-                              setComponentDisabled(e.target.checked)
-                            }
-                          >
-                            Disabled
-                          </Checkbox>
-                        </Col>
-                      </Col>
-                    </Row>
                   </Col>
                 </Row>
               </Form>
+              <Row>
+                <Col span={24}>
+                  <Col span={12}>
+                    <Checkbox
+                      checked={componentDisabled}
+                      onChange={(e) => setComponentDisabled(e.target.checked)}
+                    >
+                      Disabled
+                    </Checkbox>
+                  </Col>
+                </Col>
+              </Row>
             </div>
           </Col>
         </Row>
       </div>
+      <Modal
+        open={previewOpen}
+        title={previewTitle}
+        footer={null}
+        onCancel={handleCancel}
+      >
+        <img
+          alt="example"
+          style={{
+            width: "100%",
+          }}
+          src={previewImage}
+        />
+      </Modal>
     </div>
   );
 };

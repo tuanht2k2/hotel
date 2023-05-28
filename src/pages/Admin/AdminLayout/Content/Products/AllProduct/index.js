@@ -1,15 +1,15 @@
 import {
   Form,
   InputNumber,
-  Popconfirm,
+  Popconfirm as Onconfirm,
   Table,
   Typography,
   Input,
-  AutoComplete,
   Row,
   Col,
   Select,
   Button,
+  Image,
 } from "antd";
 import { useEffect, useState } from "react";
 import classNames from "classnames/bind";
@@ -19,7 +19,7 @@ import {
   handleGetData,
   handleUpdateData,
 } from "../../../../../../utils/database";
-
+const { Search } = Input;
 let cx = classNames.bind(styles);
 
 const EditableCell = ({
@@ -61,17 +61,34 @@ const AllRooms = () => {
   const [form] = Form.useForm();
   const [data, setData] = useState([]);
   const [editingKey, setEditingKey] = useState("");
-  const [options, setOptions] = useState([]);
   const [roomIds, setRoomIds] = useState([]);
   const [changeData, setChangeData] = useState([]);
-
   const getListRooms = async () => {
     try {
       const listRooms = await handleGetData("/admin/create-room/rooms");
       const dataRooms = [];
       const listKeys = [];
       for (let key in listRooms.val()) {
-        dataRooms.push(listRooms.val()[key]);
+        const roomData = listRooms.val()[key];
+        // console.log(roomData.roomImage[0]);
+        roomData.roomImage ? (
+          (roomData.roomImage = (
+            <Image
+              width={150}
+              src={roomData.roomImage[0].imageUrl}
+              onError={(err) => {
+                console.log(err);
+              }}
+              // rootClassName={cx("allRoom__image--preview")}
+            />
+          ))
+        ) : (
+          <Image
+            width={150}
+            src="https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png"
+          />
+        );
+        dataRooms.push(roomData);
         listKeys.push(key);
       }
       setData([...dataRooms]);
@@ -82,40 +99,21 @@ const AllRooms = () => {
     }
   };
 
-  const searchResult = (query, listRooms) => {
-    const results = [];
-    listRooms.forEach((_, idx) => {
-      if (_.r_name.toLowerCase().includes(query)) {
-        results.push({
-          value: _.r_name,
-          label: (
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-              }}
-            >
-              <span>
-                Found {query} on{" "}
-                <a href={`/`} target="_blank" rel="noopener noreferrer">
-                  {_.r_name}
-                </a>
-              </span>
-              <span>results</span>
-            </div>
-          ),
-        });
+  const onSearchByName = (value) => {
+    const filterRooms = changeData.filter((room) => {
+      if (room.roomName.toLowerCase().includes(value)) {
+        return true;
       }
     });
-    return results;
+    setData(filterRooms);
   };
+
   const onChangeRoom = (value) => {
     const results = changeData.filter((room) => {
-      if(!value) {
+      if (!value) {
         return room;
       }
-      console.log(room);
-      if (room.r_type.toLowerCase() === value || room.status.toLowerCase() === value) {
+      if (room.roomType.toLowerCase() === value || room.roomRank.toLowerCase() === value) {
         return true;
       }
     });
@@ -125,14 +123,6 @@ const AllRooms = () => {
   useEffect(() => {
     getListRooms();
   }, [editingKey]);
-
-  const handleSearch = (value) => {
-    console.log(searchResult(value, data));
-    setOptions(value ? searchResult(value, data) : []);
-  };
-  const onSelect = (value) => {
-    console.log("onSelect", value);
-  };
 
   const onSearch = (value) => {
     console.log("search:", value);
@@ -182,37 +172,43 @@ const AllRooms = () => {
   const columns = [
     {
       title: "Room Image",
-      dataIndex: "r_image",
+      dataIndex: "roomImage",
       width: "15%",
-      editable: true,
+      editable: false,
     },
     {
       title: "Room Name",
-      dataIndex: "r_name",
+      dataIndex: "roomName",
       width: "15%",
       editable: true,
     },
     {
       title: "Room Description",
-      dataIndex: "r_desc",
+      dataIndex: "roomDesc",
       width: "20%",
       editable: true,
     },
     {
       title: "Room Type",
-      dataIndex: "r_type",
+      dataIndex: "roomType",
       width: "10%",
       editable: true,
     },
     {
       title: "Room Amenity",
-      dataIndex: "r_amenity",
+      dataIndex: "roomAmenity",
       width: "15%",
       editable: true,
     },
     {
+      title: "Room Rank",
+      dataIndex: "roomRank",
+      width: "10%",
+      editable: true,
+    },
+    {
       title: "Room Price",
-      dataIndex: "r_price",
+      dataIndex: "roomPrice",
       width: "15%",
       editable: true,
     },
@@ -231,9 +227,11 @@ const AllRooms = () => {
             >
               Save
             </Typography.Link>
-            <Popconfirm title="Sure to cancel?" onConfirm={cancel}>
-              <a>Cancel</a>
-            </Popconfirm>
+            <Onconfirm title="Sure to cancel?" onConfirm={cancel}>
+              <p style={{ color: "#1677ff", display: "inline-block" }}>
+                Cancel
+              </p>
+            </Onconfirm>
           </span>
         ) : (
           <Typography.Link
@@ -275,18 +273,13 @@ const AllRooms = () => {
         <Row>
           <Col span={8} style={{ marginRight: "20px" }}>
             <Title level={5}>What are you looking for ?</Title>
-            <AutoComplete
-              style={{
-                width: "100%",
-              }}
-              options={options}
-              onSelect={onSelect}
-              onSearch={handleSearch}
-              notFoundContent={"Not found room"}
-              allowClear={true}
-              placeholder="Type to find room by room name"
-            >
-            </AutoComplete>
+            <Search
+              placeholder="Type to search by room name"
+              allowClear
+              enterButton="Search"
+              size="medium"
+              onSearch={onSearchByName}
+            />
           </Col>
 
           <Col span={6} style={{ marginRight: "20px" }}>
@@ -316,7 +309,35 @@ const AllRooms = () => {
               ]}
             />
           </Col>
-         
+
+          <Col span={6} style={{ marginRight: "20px" }}>
+            <Title level={5}>Room Rank</Title>
+            <Select
+              style={{ width: "100%" }}
+              showSearch
+              placeholder="Select room rank"
+              optionFilterProp="children"
+              onChange={onChangeRoom}
+              onSearch={onSearch}
+              filterOption={(input, option) =>
+                (option?.label ?? "")
+                  .toLowerCase()
+                  .includes(input.toLowerCase())
+              }
+              allowClear={true}
+              options={[
+                {
+                  value: "normal",
+                  label: "Normal",
+                },
+                {
+                  value: "superior",
+                  label: "Superior",
+                },
+              ]}
+            />
+          </Col>
+
           <Col span={2} style={{ alignSelf: "flex-end" }}>
             <Button
               style={{

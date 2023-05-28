@@ -107,7 +107,7 @@ const data = [
   {
     key: "2",
     _id: "id 2",
-    username: "Tuan",
+    username: "Kiet",
     phone: 32,
     address: "New York No. 2 Lake Park",
     r_name: "Room 2",
@@ -118,7 +118,7 @@ const data = [
   {
     key: "3",
     _id: "id 3",
-    username: "John Brown",
+    username: "Minh",
     phone: 32,
     address: "New York No. 3 Lake Park",
     r_name: "Room 3",
@@ -129,7 +129,7 @@ const data = [
   {
     key: "4",
     _id: "id 4",
-    username: "John Brown",
+    username: "Hiep",
     phone: 32,
     address: "New York No. 4 Lake Park",
     r_name: "Room 4",

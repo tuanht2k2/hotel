@@ -1,26 +1,100 @@
-html,
-body {
-  width: 100%;
+.signup--wrapper {
   height: 100%;
-}
+  width: 100%;
+  background-repeat: no-repeat;
+  background-size: cover;
 
-.wrapper {
-  position: relative;
-  height: 100%;
-  width: 100%;
-}
+  .signup__overlay {
+    height: 100%;
+    width: 100%;
+    background-color: rgba(0, 0, 0, 0.403);
+    display: flex;
+    justify-content: center;
+    align-items: center;
 
-.layer {
-  position: absolute;
-  top: 0;
-  right: 0;
-  height: 100%;
-  width: 100%;
-  background-color: rgba(0, 0, 0, 0.157);
-}
+    .signup__content--wrapper {
+      max-width: 25vw;
+      text-align: center;
 
-.img {
-  height: 100%;
-  width: 100%;
-  object-fit: cover;
+      .signup__content__header {
+        margin-bottom: 30px;
+        font-family: EncodeSans-Semibold;
+        color: white;
+      }
+
+      .signup__content__form {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+
+        * {
+          color: white;
+        }
+
+        p {
+          color: rgb(255, 14, 14);
+        }
+      }
+
+      .signup__content__control {
+        .signup__content__control--top {
+          display: flex;
+          justify-content: center;
+
+          button {
+            margin: 25px;
+          }
+        }
+
+        .signup__content__control--bottom {
+          display: flex;
+          align-items: center;
+
+          .signup__content__control--bottom--left {
+            label:last-child {
+              text-align: start;
+              color: #fbceb5;
+              user-select: none;
+            }
+          }
+        }
+      }
+    }
+
+    @media screen and (min-width: 1370px) {
+      .signup__content--wrapper {
+        max-width: 30vw;
+      }
+    }
+
+    @media screen and (min-width: 920px) and (max-width: 1370px) {
+      .signup__content--wrapper {
+        max-width: 30vw;
+      }
+    }
+
+    @media screen and (min-width: 768px) and (max-width: 1130px) {
+      .signup__content--wrapper {
+        max-width: 45vw;
+      }
+    }
+
+    @media screen and (max-width: 768px) {
+      .signup__content--wrapper {
+        max-width: 60vw;
+      }
+    }
+
+    @media screen and (max-width: 600px) {
+      .signup__content--wrapper {
+        max-width: 80vw;
+      }
+    }
+
+    @media screen and (max-width: 400px) {
+      .signup__content--wrapper {
+        max-width: 90vw;
+      }
+    }
+  }
 }
