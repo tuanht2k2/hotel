@@ -7,9 +7,6 @@ import { useDispatch } from 'react-redux';
 import { onAuthStateChanged } from 'firebase/auth';
 import { auth } from './firebase';
 
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import routes from './routes';
-
 import { signInAction } from './actions/user';
 
 import './App.css';
