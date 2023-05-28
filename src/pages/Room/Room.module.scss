@@ -2,13 +2,13 @@
   --room-text-color-1: rgb(255, 132, 0);
 }
 
-.room--wrapper--padding {
+.room__wrapper--padding {
   padding: 30px;
   background-color: var(--gray-1);
   min-height: calc(100vh - 50px);
 }
 
-.room--wrapper {
+.room__wrapper {
   margin-right: 30px;
   width: 100%;
   height: 100%;
@@ -37,42 +37,39 @@
   }
 }
 
-// .room__header__room--name__label {
-// }
-
 .room__header__room--name__title {
   margin-left: 10px;
   color: var(--room-text-color-1);
 }
 
-.room__info--wrapper {
+.room__info__wrapper {
   padding: 20px 0;
-  display: flex;
-  align-items: flex-start;
+
+  .booking__btn__wrapper {
+    margin-top: 20px;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+
+    button span {
+      font-family: EncodeSans-Semibold;
+    }
+  }
 }
 
-.room__info__img--wrapper {
+// carousel
+
+.room__info__carousel__wrapper {
   flex: 1;
-  height: fit-content;
-  border-radius: 10px;
-  background-color: rgb(0, 0, 0);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  overflow: hidden;
-}
-
-.room__info__img--tag {
-  width: 100%;
-  object-fit: contain;
 }
 
 // room details
 
-.room__info__detail--wrapper {
+.room__info__detail__wrapper {
   flex: 1;
-  padding-left: 60px;
   height: 100%;
+  padding-top: 15px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -96,12 +93,12 @@
   font-size: 20px;
 }
 
-.room__info__detail--wrapper {
+.room__info__detail__wrapper {
   & * {
     font-family: EncodeSans-Semibold;
   }
 
-  .room__info__detail__rating--wrapper {
+  .room__info__detail__rating__wrapper {
     .room__info__detail__rating__label {
     }
 
@@ -116,7 +113,7 @@
     }
   }
 
-  .room__info__detail__price--wrapper {
+  .room__info__detail__price__wrapper {
     .room__info__detail__price__label {
     }
 
@@ -125,7 +122,7 @@
     }
   }
 
-  .room__info__detail__type--wrapper {
+  .room__info__detail__type__wrapper {
     .room__info__detail__type__label {
     }
 
@@ -134,7 +131,7 @@
     }
   }
 
-  .room__info__detail__classification--wrapper {
+  .room__info__detail__classification__wrapper {
     .room__info__detail__classification__label {
     }
 
@@ -143,7 +140,7 @@
     }
   }
 
-  .room__info__detail__desc--wrapper {
+  .room__info__detail__desc__wrapper {
     .room__info__detail__desc__label {
       align-self: flex-start;
     }
@@ -154,17 +151,9 @@
       }
     }
   }
-
-  .booking__btn--wrapper {
-    margin-top: 20px;
-    width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;
-  }
 }
 
-.room__interaction--wrapper {
+.room__interaction__wrapper {
   margin-top: 10px;
   border-top: 1px solid orangered;
   padding: 20px 0;

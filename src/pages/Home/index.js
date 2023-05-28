@@ -10,30 +10,30 @@ const cx = classNames.bind(style);
 
 function Home() {
   return (
-    <div className={cx('home--wrapper')}>
-      <div className={cx('home__carousel--wrapper')}>
-        <Carousel autoplay>
-          <div className={cx('home__carousel__item--wrapper')}>
+    <div className={cx('home__wrapper')}>
+      <div className={cx('home__carousel__wrapper')}>
+        <Carousel autoplaySpeed={3000} autoplay>
+          <div className={cx('home__carousel__item__wrapper')}>
             <img
               className={cx('home__carousel__item__img')}
-              src="https://pix10.agoda.net/hotelImages/659/6592334/6592334_19022704090072546036.jpg?ca=7&ce=1&s=1024x768"
+              src="https://wallpapers.com/images/featured/sdr508awonqxixqe.jpg"
             />
           </div>
-          <div className={cx('home__carousel__item--wrapper')}>
+          <div className={cx('home__carousel__item__wrapper')}>
             <img
               className={cx('home__carousel__item__img')}
-              src="https://pix10.agoda.net/hotelImages/659/6592334/6592334_19022704090072546036.jpg?ca=7&ce=1&s=1024x768"
+              src="https://images7.alphacoders.com/362/362619.jpg"
             />
           </div>
-          <div className={cx('home__carousel__item--wrapper')}>
+          <div className={cx('home__carousel__item__wrapper')}>
             <img
               className={cx('home__carousel__item__img')}
-              src="https://pix10.agoda.net/hotelImages/659/6592334/6592334_19022704090072546036.jpg?ca=7&ce=1&s=1024x768"
+              src="https://pixelz.cc/wp-content/uploads/2018/12/costa-adeje-gran-hotel-pool-spain-uhd-4k-wallpaper.jpg"
             />
           </div>
         </Carousel>
       </div>
-      <div className={cx('home__content--wrapper')}>
+      <div className={cx('home__content__wrapper')}>
         <div className={cx('home__content--intro')}>
           <div className={cx('home__content--intro--left')}>
             <img className={cx('home__content--intro--left-img')} src={images.homeIntroImage} />
@@ -54,17 +54,17 @@ function Home() {
             </a>
           </div>
         </div>
-        <div className={cx('home__content__video--wrapper')}>
+        <div className={cx('home__content__video__wrapper')}>
           <iframe
             className={cx('home__content__video')}
-            src="https://www.youtube.com/embed/WJThNmE_ehE"
+            src="https://www.youtube-nocookie.com/embed/9I2xta0ahIs"
             title="Introduction video"
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
             allowFullScreen
           ></iframe>
         </div>
-        <div id="booking" className={cx('home__content__room--list--wrapper')}>
-          <div className={cx('home__content__room--list--header')}>Đặt phòng ngay</div>
+        <div id="booking" className={cx('home__content__room__list__wrapper')}>
+          <div className={cx('home__content__room__list--header')}>Đặt phòng ngay</div>
           <HomeRoomList />
         </div>
       </div>

@@ -7,7 +7,7 @@ const cx = classNames.bind(style);
 
 function Default({ children }) {
   return (
-    <div className={cx('default--wrapper')}>
+    <div className={cx('default__wrapper')}>
       <header className={cx('default__header')}>
         <Header />
       </header>

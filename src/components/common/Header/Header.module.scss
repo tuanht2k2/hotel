@@ -8,7 +8,7 @@
   background-color: var(--primary-color);
 }
 
-.header__logo--wrapper {
+.header__logo__wrapper {
   margin-right: auto;
   height: 100%;
   border-radius: 20px;
@@ -31,9 +31,13 @@
   & + & {
     border-left: 1px solid red;
   }
+
+  button span {
+    font-family: EncodeSans-SemiBold;
+  }
 }
 
-.item__icon--wrapper {
+.item__icon__wrapper {
   height: 30px;
   width: 30px;
   display: flex;
@@ -53,4 +57,8 @@
 .item--title {
   margin-left: 10px;
   font-family: EncodeSans-Bold;
+}
+
+.header__skeleton__wrapper {
+  margin-top: -18px;
 }

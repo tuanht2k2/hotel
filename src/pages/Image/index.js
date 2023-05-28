@@ -19,18 +19,16 @@ import style from './Image.module.scss';
 const cx = classNames.bind(style);
 
 function Image() {
-  const { imageId } = useParams();
+  const { roomId, imageIndex } = useParams();
   const navigate = useNavigate();
-
-  console.log('imageId');
 
   const [imagePath, setImagePath] = useState('');
   const [imageScale, setImageScale] = useState(1);
 
-  const handleGetImage = (imageId) => {
-    const imagePath = `images/${imageId}`;
+  const handleGetImage = (imageIndex) => {
+    const imagePath = `admin/create-room/rooms/${roomId}/roomImage/${imageIndex}`;
     handleGetData(imagePath).then((snapshot) => {
-      setImagePath(snapshot.val()?.mediaDownloadURL || '');
+      setImagePath(snapshot.val()?.imageUrl || '');
     });
   };
 
@@ -47,7 +45,7 @@ function Image() {
   };
 
   useEffect(() => {
-    handleGetImage(imageId);
+    handleGetImage(imageIndex);
 
     document.title = 'Ảnh';
 
@@ -55,31 +53,24 @@ function Image() {
   }, []);
 
   return (
-    <div className={cx('image--wrapper')}>
+    <div className={cx('image__wrapper')}>
       <div className={cx('image--control')}>
         <div className={cx('image--control__left')}>
           <span
-            className={cx('image--control__left__icon--wrapper')}
+            className={cx('image--control__left__icon__wrapper')}
             onClick={() => {
               handleBack();
             }}
           >
             <FontAwesomeIcon icon={faXmark} />
           </span>
-          <Link
-            to={'/home'}
-            className={cx('image--control__left--brand--icon--wrapper')}
-          >
+          <Link to={'/home'} className={cx('image--control__left--brand--icon__wrapper')}>
             <img className={cx('logo--img')} src={images.logo} />
           </Link>
         </div>
         <div className={cx('image--control__right')}>
           <span
-            className={cx(
-              'icon--wrapper',
-              'image--control__right__icon--wrapper',
-              imageScale >= 1.9 && 'disabled'
-            )}
+            className={cx('image--control__right__icon__wrapper', imageScale >= 1.9 && 'disabled')}
             onClick={() => {
               imageScale < 1.9 && handleZoom('ZOOM_IN');
             }}
@@ -88,8 +79,8 @@ function Image() {
           </span>
           <span
             className={cx(
-              'icon--wrapper',
-              'image--control__right__icon--wrapper',
+              'icon__wrapper',
+              'image--control__right__icon__wrapper',
               imageScale <= 1 && 'disabled'
             )}
             onClick={() => {
@@ -101,7 +92,7 @@ function Image() {
         </div>
       </div>
       <img
-        className={cx('image--tag')}
+        className={cx('image__tag')}
         src={imagePath}
         alt="Ảnh này đã bị xóa"
         style={{ transform: `scale(${imageScale})` }}

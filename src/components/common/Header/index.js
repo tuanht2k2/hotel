@@ -1,10 +1,15 @@
 import { Link } from 'react-router-dom';
-import { Fragment, useState } from 'react';
+import { Fragment, useEffect, useState } from 'react';
 
 import classNames from 'classnames/bind';
+
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHome, faHotel } from '@fortawesome/free-solid-svg-icons';
+import { Skeleton, Stack } from '@mui/material';
 import { Button } from 'antd';
+
+import { onAuthStateChanged } from 'firebase/auth';
+import { auth } from '../../../firebase';
 
 import images from '../../../assets/images';
 import style from './Header.module.scss';
@@ -13,7 +18,8 @@ import UserDropdown from './components/UserDropdown';
 const cx = classNames.bind(style);
 
 function Header() {
-  const [user, setUser] = useState({});
+  const [user, setUser] = useState(null);
+  const [isLoaded, setIsLoaded] = useState(false);
 
   const HEADER = [
     {
@@ -29,22 +35,32 @@ function Header() {
     {
       title: '',
       icon: '',
-      tag:
-        Object.keys(user).length > 0 ? (
-          <img src={images.defaultAvatar} className={cx('item__icon__img')} />
-        ) : (
-          <Link to={'/sign-in'}>
-            <Button type="primary">Đăng nhập</Button>
-          </Link>
-        ),
-      to: '',
-      tippyDropdown: Object.keys(user).length > 0 ? UserDropdown : null,
+      tag: user ? (
+        <img src={images.defaultAvatar} className={cx('item__icon__img')} />
+      ) : (
+        <Button type="primary" danger>
+          Đăng nhập
+        </Button>
+      ),
+      to: user ? '' : '/sign-in',
+      tippyDropdown: user ? UserDropdown : null,
     },
   ];
 
-  return (
+  useEffect(() => {
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        setUser(user.uid);
+        setIsLoaded(true);
+      } else {
+        setIsLoaded(true);
+      }
+    });
+  }, []);
+
+  return isLoaded ? (
     <div className={cx('header__wrapper')}>
-      <Link to={'/home'} className={cx('header__logo--wrapper')}>
+      <Link to={'/home'} className={cx('header__logo__wrapper')}>
         <img src={images.logo} className={cx('header__logo__img')} />
       </Link>
       {HEADER.map((item, index) => {
@@ -52,13 +68,19 @@ function Header() {
         return (
           <TippyDropdown key={`header__tippy--dropdown${index}`}>
             <Link key={`header-item-${index}`} className={cx('header__item')} to={item.to}>
-              {item.icon && <div className={cx('item__icon--wrapper')}>{item.icon}</div>}
+              {item.icon && <div className={cx('item__icon__wrapper')}>{item.icon}</div>}
               {item.tag && item.tag}
               <div className={cx('item--title')}>{item.title}</div>
             </Link>
           </TippyDropdown>
         );
       })}
+    </div>
+  ) : (
+    <div className={cx('header__skeleton__wrapper')}>
+      <Stack spacing={0}>
+        <Skeleton variant="text" height={80}></Skeleton>
+      </Stack>
     </div>
   );
 }

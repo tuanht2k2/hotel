@@ -18,16 +18,16 @@ function Comments({ handleToggleSignInTippy }) {
   const { useRatingRender, rating } = useRating();
 
   return (
-    <div className={cx('comments--wrapper')}>
+    <div className={cx('comments__wrapper')}>
       <div className={cx('comments__header')}>
         <div className={cx('comments__header__title')}>Đánh giá</div>
-        <div className={cx('comments__header__rate--wrapper')}>
+        <div className={cx('comments__header__rate__wrapper')}>
           <div className={cx('comments__header__rate__quantity')}>124 lượt đánh giá</div>
           <div className={cx('comments__header__rate__quantity__text')}>4.9</div>
           <img className={cx('comments__header__rate__quantity__img')} src={images.starIcon} />
         </div>
       </div>
-      <div className={cx('comments--main--wrapper')}>
+      <div className={cx('comments--main__wrapper')}>
         {Object.keys(user).length > 0 ? (
           <div className={cx('comments--main__create__comment')}>
             <div className={cx('comments--main__create__comment__header')}>

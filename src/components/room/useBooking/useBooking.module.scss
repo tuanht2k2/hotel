@@ -1,0 +1,69 @@
+.use__booking__wrapper {
+  width: 100vw;
+  height: calc(100vh);
+  background-color: rgba(0, 0, 0, 0.24);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+
+  .use__booking__content {
+    max-width: 40vw;
+    max-height: 80vh;
+    box-shadow: var(--box-shadow-1);
+    border-radius: 15px;
+    background-color: white;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    overflow-y: scroll;
+
+    .use__booking__content__icon__wrapper {
+      align-self: flex-end;
+    }
+
+    .use__booking__content__logo {
+      margin-bottom: 10px;
+      width: 55px;
+      height: 55px;
+      border-radius: 50%;
+    }
+
+    .use__booking__content__header {
+      font-size: 23px;
+      font-family: EncodeSans-Semibold;
+    }
+
+    .use__booking__content__date__picker__header {
+      margin: 15px 0 5px 0;
+      font-size: 18px;
+      font-family: EncodeSans-Semibold;
+      color: var(--text-color-8);
+    }
+
+    .use__booking__content__button__btn {
+      margin-top: 20px;
+
+      button {
+        font-family: EncodeSans-Semibold;
+
+        & + & {
+          margin-left: 20px;
+        }
+      }
+    }
+  }
+
+  @media screen and (max-width: 1024px) {
+    .use__booking__content {
+      max-width: 70vw;
+    }
+  }
+
+  @media screen and (max-width: 768px) {
+    .use__booking__content {
+      max-width: 90vw;
+    }
+  }
+}

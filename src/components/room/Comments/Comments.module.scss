@@ -1,4 +1,4 @@
-.comments--wrapper {
+.comments__wrapper {
   width: 100%;
 
   .comments__header {
@@ -11,7 +11,7 @@
       font-size: 20px;
     }
 
-    .comments__header__rate--wrapper {
+    .comments__header__rate__wrapper {
       display: flex;
       align-items: center;
 
@@ -38,7 +38,7 @@
     }
   }
 
-  .comments--main--wrapper {
+  .comments--main__wrapper {
     .comments--main__create__comment {
       margin-top: 20px;
 

@@ -6,7 +6,7 @@ const routes = [
   { path: '/', type: 'public', element: <Home />, layout: DefaultLayout },
   {
     path: '/bookings',
-    type: 'private',
+    type: 'public',
     element: <Bookings />,
     layout: DefaultLayout,
   },
@@ -18,7 +18,7 @@ const routes = [
   },
   { path: '/sign-in', type: 'public', element: <SignIn /> },
   { path: '/sign-up', type: 'public', element: <SignUp /> },
-  { path: '/images/:imageId', type: 'public', element: <Image /> },
+  { path: '/rooms/:roomId/images/:imageIndex', type: 'public', element: <Image /> },
 ];
 
 export default routes;

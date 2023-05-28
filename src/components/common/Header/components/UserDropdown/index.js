@@ -1,15 +1,33 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+
 import HeadlessTippy from '@tippyjs/react/headless';
+import classNames from 'classnames/bind';
+
+import { auth } from '../../../../../firebase';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faBed, faGear, faUser } from '@fortawesome/free-solid-svg-icons';
+import { faBed, faGear, faRightFromBracket, faUser } from '@fortawesome/free-solid-svg-icons';
+
+import { signOutAction } from '../../../../../actions/user';
 
 import style from './UserDropdown.module.scss';
-import classNames from 'classnames/bind';
 
 const cx = classNames.bind(style);
 
 function UserDropdown({ children }) {
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  const handleSignOut = () => {
+    auth.signOut().then(() => {
+      const signOut = signOutAction();
+      dispatch(signOut);
+
+      navigate('/sign-in');
+    });
+  };
+
   return (
     <HeadlessTippy
       interactive
@@ -18,28 +36,35 @@ function UserDropdown({ children }) {
       placement="bottom"
       render={() => (
         <div className={cx('sidebar__item__tippy--dropdown-wrapper')}>
-          <Link to={'/profile'} className={cx('tippy--dropdown__item--link')}>
-            <div className={cx('tippy--dropdown__item__icon--wrapper')}>
+          <Link to={'/profile'} className={cx('tippy--dropdown__item__wrapper')}>
+            <div className={cx('tippy--dropdown__item__icon__wrapper')}>
               <FontAwesomeIcon icon={faUser} />
             </div>
-            <div className={cx('tippy--dropdown__item__title')}>
-              Thông tin cá nhân
-            </div>
+            <div className={cx('tippy--dropdown__item__title')}>Thông tin cá nhân</div>
           </Link>
-          <Link to={'/booked'} className={cx('tippy--dropdown__item--link')}>
-            <div className={cx('tippy--dropdown__item__icon--wrapper')}>
+          <Link to={'/booked'} className={cx('tippy--dropdown__item__wrapper')}>
+            <div className={cx('tippy--dropdown__item__icon__wrapper')}>
               <FontAwesomeIcon icon={faBed} />
             </div>
-            <div className={cx('tippy--dropdown__item__title')}>
-              Phòng đã đặt
-            </div>
+            <div className={cx('tippy--dropdown__item__title')}>Phòng đã đặt</div>
           </Link>
-          <Link to={'/settings'} className={cx('tippy--dropdown__item--link')}>
-            <div className={cx('tippy--dropdown__item__icon--wrapper')}>
+          <Link to={'/settings'} className={cx('tippy--dropdown__item__wrapper')}>
+            <div className={cx('tippy--dropdown__item__icon__wrapper')}>
               <FontAwesomeIcon icon={faGear} />
             </div>
             <div className={cx('tippy--dropdown__item__title')}>Cài đặt</div>
           </Link>
+          <div
+            className={cx('tippy--dropdown__item__wrapper')}
+            onClick={() => {
+              handleSignOut();
+            }}
+          >
+            <div className={cx('tippy--dropdown__item__icon__wrapper')}>
+              <FontAwesomeIcon icon={faRightFromBracket} />
+            </div>
+            <div className={cx('tippy--dropdown__item__title')}>Đăng xuất</div>
+          </div>
         </div>
       )}
     >

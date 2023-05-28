@@ -13,7 +13,7 @@
 
   --gray-0: #f0f2f5;
   --gray-1: #dfe0e1;
-  --gray-2: #c0c1c4;
+  --gray-2: #ceced0;
   --gray-3: #aeafb1;
   --gray-4: #9d9fa1;
 
@@ -116,6 +116,28 @@ img {
 
   * {
     color: var(--text-color-8);
+  }
+}
+
+// icon wrapper
+.global__icon__wrapper {
+  height: 30px;
+  width: 30px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: var(--gray-1);
+  cursor: pointer;
+  transition: 0.3s;
+
+  &:hover {
+    background-color: var(--gray-2);
+  }
+
+  * {
+    color: var(--text-color-5);
+    font-size: 17px;
   }
 }
 

@@ -44,8 +44,8 @@ const cx = classNames.bind(style);
 
 function Bookings() {
   return (
-    <div className={cx('bookings--wrapper')}>
-      <div className={cx('bookings__selector--wrapper')}>
+    <div className={cx('bookings__wrapper')}>
+      <div className={cx('bookings__selector__wrapper')}>
         <Menu defaultSelectedKeys={['1']} mode="inline" theme="dark" items={items} />
       </div>
       <BookingsRoomList />

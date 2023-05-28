@@ -1,0 +1,31 @@
+.room__image__carousel__item {
+  height: 650px;
+  border-radius: 10px;
+  background-color: black;
+  display: flex;
+  justify-content: center;
+
+  .room__image__carousel__img {
+    height: 100%;
+    width: 100%;
+    object-fit: contain;
+  }
+}
+
+@media screen and (max-width: 1300px) {
+  .room__image__carousel__item {
+    height: 550px;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .room__image__carousel__item {
+    height: 450px;
+  }
+}
+
+@media screen and (max-width: 600px) {
+  .room__image__carousel__item {
+    height: 350px;
+  }
+}

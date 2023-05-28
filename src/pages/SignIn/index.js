@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import { Fragment, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
+import { Link, useNavigate } from 'react-router-dom';
 
 import classNames from 'classnames/bind';
 
@@ -7,15 +8,19 @@ import { Button, Checkbox, FormControlLabel, Grid, TextField } from '@mui/materi
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSpinner } from '@fortawesome/free-solid-svg-icons';
 
-import { signIn } from '../../utils/authentication';
+import { handleSignIn } from '../../utils/authentication';
 import { signInAction } from '../../actions/user';
 
 import style from './SignIn.module.scss';
+import { onAuthStateChanged } from 'firebase/auth';
+import { auth } from '../../firebase';
 
 const cx = classNames.bind(style);
 
 function SignIn() {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const [isSignedIn, setIsSignedIn] = useState(false);
 
   const [formData, setFormData] = useState({
     email: {
@@ -34,11 +39,17 @@ function SignIn() {
 
   const [isLoading, setIsLoading] = useState(false);
 
+  // type: type of value of field
+  const handleSetFormData = (field, type, value) => {
+    setFormData((prev) => ({ ...prev, [field]: { ...prev[field], [type]: value } }));
+  };
+
   const handleType = (field, value) => {
-    setFormData((prev) => ({ ...prev, [field]: { ...prev[field], value: value } }));
+    handleSetFormData(field, 'value', value);
   };
 
   //handle validation
+
   const handleValidateInput = (inputName, value) => {
     if (!String(value).trim()) return 'Trường này là bắt buộc';
     switch (inputName) {
@@ -74,10 +85,7 @@ function SignIn() {
       const helperText = handleValidateInput(field, formData[field].value);
 
       if (helperText) {
-        setFormData((prev) => ({
-          ...prev,
-          [field]: { ...prev[field], helperText: helperText },
-        }));
+        handleSetFormData(field, 'helperText', helperText);
         isValid = false;
       }
     });
@@ -87,18 +95,11 @@ function SignIn() {
 
   const handleBlurInput = (fieldName, value) => {
     const helperText = handleValidateInput(fieldName, value);
-    helperText &&
-      setFormData((prev) => ({
-        ...prev,
-        [fieldName]: { ...prev[fieldName], helperText: helperText },
-      }));
+    helperText && handleSetFormData(fieldName, 'helperText', helperText);
   };
 
   const handleFocusInput = (fieldName) => {
-    setFormData((prev) => ({
-      ...prev,
-      [fieldName]: { ...prev[fieldName], helperText: '' },
-    }));
+    handleSetFormData(fieldName, 'helperText', '');
   };
 
   const handleSubmitSignUp = async () => {
@@ -107,26 +108,44 @@ function SignIn() {
     if (isValid) {
       setIsLoading(true);
 
-      const user = await signIn(formData.email.value, formData.password.value);
+      const user = await handleSignIn(formData.email.value, formData.password.value);
 
-      if (user) {
+      if (user === 'auth/wrong-password') {
+        handleSetFormData('password', 'helperText', 'Mật khẩu không chính xác');
+
         setIsLoading(false);
+      } else if (user === 'auth/user-not-found') {
+        handleSetFormData('email', 'helperText', 'Email không tồn tại');
+
+        setIsLoading(false);
+      } else if (typeof user !== 'string') {
         const currentUid = user.uid;
         const signIn = signInAction(currentUid);
         dispatch(signIn);
+
+        setIsLoading(false);
+        setIsSignedIn(true);
       }
     }
   };
 
+  useEffect(() => {
+    if (isSignedIn) {
+      navigate('/home', { replace: true });
+    }
+
+    return () => {};
+  }, [isSignedIn]);
+
   return (
     <div
-      className={cx('signin--wrapper')}
+      className={cx('signin__wrapper')}
       style={{
         backgroundImage: `url("https://preview.colorlib.com/theme/bootstrap/login-form-20/images/bg.jpg.webp")`,
       }}
     >
       <div className={cx('signin__overlay')}>
-        <div className={cx('signin__content--wrapper')}>
+        <div className={cx('signin__content__wrapper')}>
           <div className={cx('signin__content__header')}>Đăng nhập</div>
           <form className={cx('signin__content__form')}>
             <Grid container spacing={4}>
@@ -179,7 +198,9 @@ function SignIn() {
                   control={<Checkbox color="info" />}
                 />
               </div>
-              <Button color="primary">Quên mật khẩu?</Button>
+              <Link to={'/sign-up'}>
+                <Button color="primary">Chưa có tài khoản ?</Button>
+              </Link>
             </div>
           </div>
         </div>

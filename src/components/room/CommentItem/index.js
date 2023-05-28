@@ -12,7 +12,7 @@ function CommentItem() {
   const useRatingRender = useRating(4).useRatingRender;
 
   return (
-    <div className={cx('comment--wrapper')}>
+    <div className={cx('comment__wrapper')}>
       <img className={cx('comment__user__img')} src={user.photoURL || images.defaultAvatar} />
       <div className={cx('comment__user--main')}>
         <div className={cx('comment__user--main__user__name')}>Lê Quốc Mạnh</div>

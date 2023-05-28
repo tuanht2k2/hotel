@@ -31,8 +31,8 @@ function useRequireSignIn() {
         offset={[-10, 0]}
         placement="bottom"
         render={() => (
-          <div className={cx('full__screen--wrapper')}>
-            <div className={cx('tippy--wrapper')}>
+          <div className={cx('full__screen__wrapper')}>
+            <div className={cx('tippy__wrapper')}>
               <div
                 className={cx('tippy__close')}
                 onClick={() => {
@@ -47,17 +47,17 @@ function useRequireSignIn() {
                 </div>
                 <img className={cx('tippy__header__img')} src={images.logo} />
               </div>
-              <Link to={'/sign-in'} className={cx('tippy__signin__signup--wrapper')}>
+              <Link to={'/sign-in'} className={cx('tippy__signin__signup__wrapper')}>
                 <Button type="primary" danger>
                   Đăng nhập
                 </Button>
               </Link>
-              <div className={cx('tippy__separator--wrapper')}>
+              <div className={cx('tippy__separator__wrapper')}>
                 <div className={cx('tippy__separator__line')}></div>
                 <div className={cx('tippy__separator__text')}>hoặc</div>
                 <div className={cx('tippy__separator__line')}></div>
               </div>
-              <Link to={'/sign-up'} className={cx('tippy__signin__signup--wrapper')}>
+              <Link to={'/sign-up'} className={cx('tippy__signin__signup__wrapper')}>
                 <Button type="primary" ghost>
                   Đăng ký
                 </Button>

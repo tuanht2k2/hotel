@@ -1,8 +1,9 @@
-.signup--wrapper {
+.signup__wrapper {
   height: 100%;
   width: 100%;
   background-repeat: no-repeat;
   background-size: cover;
+  overflow: hidden;
 
   .signup__overlay {
     height: 100%;
@@ -12,7 +13,7 @@
     justify-content: center;
     align-items: center;
 
-    .signup__content--wrapper {
+    .signup__content__wrapper {
       max-width: 25vw;
       text-align: center;
 
@@ -62,39 +63,79 @@
     }
 
     @media screen and (min-width: 1370px) {
-      .signup__content--wrapper {
+      .signup__content__wrapper {
         max-width: 30vw;
       }
     }
 
     @media screen and (min-width: 920px) and (max-width: 1370px) {
-      .signup__content--wrapper {
+      .signup__content__wrapper {
         max-width: 30vw;
       }
     }
 
     @media screen and (min-width: 768px) and (max-width: 1130px) {
-      .signup__content--wrapper {
+      .signup__content__wrapper {
         max-width: 45vw;
       }
     }
 
     @media screen and (max-width: 768px) {
-      .signup__content--wrapper {
+      .signup__content__wrapper {
         max-width: 60vw;
       }
     }
 
     @media screen and (max-width: 600px) {
-      .signup__content--wrapper {
+      .signup__content__wrapper {
         max-width: 80vw;
       }
     }
 
     @media screen and (max-width: 400px) {
-      .signup__content--wrapper {
+      .signup__content__wrapper {
         max-width: 90vw;
       }
+    }
+  }
+}
+
+.tippy__pop--up__wrapper {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  background-color: rgba(0, 0, 0, 0.532);
+  justify-content: center;
+  align-items: center;
+
+  .tippy__pop--up__content {
+    border-radius: 15px;
+    background-color: var(--gray-1);
+    padding: 20px 30px 30px 30px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    .tippy__pop--up__content__icon {
+      align-self: flex-end;
+    }
+
+    .tippy__pop--up__content__text {
+      margin-top: 20px;
+      font-family: EncodeSans-Semibold;
+      color: var(--text-color-9);
+      user-select: none;
+    }
+
+    .tippy__pop--up__content__img {
+      margin-top: 20px;
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+    }
+
+    a {
+      margin-top: 20px;
     }
   }
 }

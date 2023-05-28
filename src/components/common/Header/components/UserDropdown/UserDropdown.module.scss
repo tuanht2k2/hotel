@@ -4,20 +4,21 @@
   border-radius: 0 0 10px 10px;
 }
 
-.tippy--dropdown__item--link {
+.tippy--dropdown__item__wrapper {
   width: 100%;
+  border-radius: 10px;
   padding: 10px;
   display: flex;
   align-items: center;
   transition: 0.3s;
-  border-radius: 10px;
+  cursor: pointer;
 
   &:hover {
     background-color: var(--primary-hover-color);
   }
 }
 
-.tippy--dropdown__item__icon--wrapper {
+.tippy--dropdown__item__icon__wrapper {
   height: 30px;
   width: 30px;
   font-size: 15px;

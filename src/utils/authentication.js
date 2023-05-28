@@ -1,7 +1,7 @@
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from 'firebase/auth';
 import { auth } from '../firebase';
 
-export const createUser = async (email, password) => {
+export const handleCreateUser = async (email, password) => {
   const user = await createUserWithEmailAndPassword(auth, email, password)
     .then((userCredential) => {
       const user = userCredential.user;
@@ -10,12 +10,14 @@ export const createUser = async (email, password) => {
     .catch((error) => {
       const errorCode = error.code;
       const errorMessage = error.message;
+
+      return errorCode;
     });
 
   return user;
 };
 
-export const signIn = async (email, password) => {
+export const handleSignIn = async (email, password) => {
   const user = await signInWithEmailAndPassword(auth, email, password)
     .then((userCredential) => {
       const user = userCredential.user;
@@ -24,7 +26,13 @@ export const signIn = async (email, password) => {
     .catch((error) => {
       const errorCode = error.code;
       const errorMessage = error.message;
+
+      return errorCode;
     });
 
   return user;
+};
+
+export const handleSignOut = () => {
+  return signOut(auth);
 };

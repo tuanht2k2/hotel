@@ -1,19 +1,25 @@
-import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 
 import classNames from 'classnames/bind';
 import { Button, Checkbox, FormControlLabel, Grid, TextField } from '@mui/material';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faSpinner, faXmark } from '@fortawesome/free-solid-svg-icons';
 
-import { createUser } from '../../utils/authentication';
+import HeadlessTippy from '@tippyjs/react/headless';
+
+import { handleCreateUser, handleSignOut } from '../../utils/authentication';
 import { handleSetData } from '../../utils/database';
 
+import images from '../../assets/images';
 import style from './SignUp.module.scss';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSpinner } from '@fortawesome/free-solid-svg-icons';
+import { onAuthStateChanged } from 'firebase/auth';
 
 const cx = classNames.bind(style);
 
 function SignUp() {
+  const navigate = useNavigate();
+
   const [formData, setFormData] = useState({
     firstName: {
       label: 'Họ',
@@ -43,6 +49,13 @@ function SignUp() {
       type: 'text',
       sm: 12,
     },
+    address: {
+      label: 'Địa chỉ',
+      helperText: '',
+      value: '',
+      type: 'text',
+      sm: 12,
+    },
     password: {
       label: 'Mật khẩu',
       helperText: '',
@@ -61,11 +74,20 @@ function SignUp() {
 
   const [isLoading, setIsLoading] = useState(false);
 
+  const [isTippyPopUpVisible, setIsTippyPopUpVisible] = useState(false);
+
+  // type: type of value of field
+  const handleSetFormData = (field, type, value) => {
+    setFormData((prev) => ({ ...prev, [field]: { ...prev[field], [type]: value } }));
+  };
+
   const handleType = (field, value) => {
-    setFormData((prev) => ({ ...prev, [field]: { ...prev[field], value: value } }));
+    handleSetFormData(field, 'value', value);
   };
 
   // validate form
+
+  //handle validation
 
   const handleValidateInput = (inputName, value) => {
     if (!String(value).trim()) return 'Trường này là bắt buộc';
@@ -102,10 +124,7 @@ function SignUp() {
       const helperText = handleValidateInput(field, formData[field].value);
 
       if (helperText) {
-        setFormData((prev) => ({
-          ...prev,
-          [field]: { ...prev[field], helperText: helperText },
-        }));
+        handleSetFormData(field, 'helperText', helperText);
         isValid = false;
       }
     });
@@ -115,18 +134,11 @@ function SignUp() {
 
   const handleBlurInput = (fieldName, value) => {
     const helperText = handleValidateInput(fieldName, value);
-    helperText &&
-      setFormData((prev) => ({
-        ...prev,
-        [fieldName]: { ...prev[fieldName], helperText: helperText },
-      }));
+    helperText && handleSetFormData(fieldName, 'helperText', helperText);
   };
 
   const handleFocusInput = (fieldName) => {
-    setFormData((prev) => ({
-      ...prev,
-      [fieldName]: { ...prev[fieldName], helperText: '' },
-    }));
+    handleSetFormData(fieldName, 'helperText', '');
   };
 
   const handleSubmitSignUp = async () => {
@@ -135,7 +147,18 @@ function SignUp() {
     if (isValid) {
       setIsLoading(true);
 
-      const user = await createUser(formData.email.value, formData.password.value);
+      const user = await handleCreateUser(formData.email.value, formData.password.value);
+
+      if (user === 'auth/email-already-in-use') {
+        setFormData((prev) => ({
+          ...prev,
+          email: { ...prev['email'], helperText: 'Email đã được sử dụng' },
+        }));
+
+        setIsLoading(false);
+
+        return;
+      }
 
       const userData = {
         uid: user.uid,
@@ -144,23 +167,33 @@ function SignUp() {
         lastName: formData.lastName.value,
         email: formData.email.value,
         phoneNumber: formData.phoneNumber.value,
+        address: formData.address.value,
       };
 
       handleSetData(`users/${user.uid}`, userData).then(() => {
-        setIsLoading(false);
+        handleSignOut().then(() => {
+          setIsLoading(false);
+          setIsTippyPopUpVisible(true);
+        });
       });
     }
   };
 
+  // navigation
+
+  const handleNavigate = () => {
+    navigate('/sign-in', { replace: true });
+  };
+
   return (
     <div
-      className={cx('signup--wrapper')}
+      className={cx('signup__wrapper')}
       style={{
         backgroundImage: `url("https://preview.colorlib.com/theme/bootstrap/login-form-20/images/bg.jpg.webp")`,
       }}
     >
       <div className={cx('signup__overlay')}>
-        <div className={cx('signup__content--wrapper')}>
+        <div className={cx('signup__content__wrapper')}>
           <div className={cx('signup__content__header')}>Đăng ký</div>
           <form className={cx('signup__content__form')}>
             <Grid container spacing={2}>
@@ -223,6 +256,39 @@ function SignUp() {
           </div>
         </div>
       </div>
+      <HeadlessTippy
+        appendTo={document.body}
+        placement="bottom"
+        offset={[0, -2]}
+        visible={isTippyPopUpVisible}
+        interactive
+        render={() => (
+          <div className={cx('tippy__pop--up__wrapper')}>
+            <div className={cx('tippy__pop--up__content')}>
+              <div
+                className={cx('global__icon__wrapper', 'tippy__pop--up__content__icon')}
+                onClick={() => {
+                  setIsTippyPopUpVisible(false);
+                }}
+              >
+                <FontAwesomeIcon icon={faXmark} />
+              </div>
+              <div className={cx('tippy__pop--up__content__text')}>
+                Chào mừng bạn đến với MKTHM Hotel
+              </div>
+              <img className={cx('tippy__pop--up__content__img')} src={images.logo} />
+
+              <Button
+                onClick={() => {
+                  handleNavigate();
+                }}
+              >
+                Đăng nhập
+              </Button>
+            </div>
+          </div>
+        )}
+      ></HeadlessTippy>
     </div>
   );
 }
