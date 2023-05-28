@@ -19,6 +19,9 @@ import {
   handleGetData,
   handleUpdateData,
 } from "../../../../../../utils/database";
+import { ToastError, ToastSuccess } from "../../../../../../utils/toast";
+// import SpinFC from "antd/es/spin";
+import Loading from '../../../../AdminComponent/Loading/Loading'
 const { Search } = Input;
 let cx = classNames.bind(styles);
 
@@ -113,7 +116,10 @@ const AllRooms = () => {
       if (!value) {
         return room;
       }
-      if (room.roomType.toLowerCase() === value || room.roomRank.toLowerCase() === value) {
+      if (
+        room.roomType.toLowerCase() === value ||
+        room.roomRank.toLowerCase() === value
+      ) {
         return true;
       }
     });
@@ -155,15 +161,21 @@ const AllRooms = () => {
           ...item,
           ...row,
         });
+        delete newData[index].roomImage;
         await handleUpdateData(
           `/admin/create-room/rooms/${roomIds[index]}`,
           newData[index]
         );
+        ToastSuccess("Update room information success", 2000);
         setEditingKey("");
       } else {
         newData.push(row);
         setData(newData);
         setEditingKey("");
+        ToastError(
+          "Opps. Something went wrong. Update room information failed.",
+          2000
+        );
       }
     } catch (errInfo) {
       console.log("Validate Failed:", errInfo);
@@ -192,19 +204,19 @@ const AllRooms = () => {
       title: "Room Type",
       dataIndex: "roomType",
       width: "10%",
-      editable: true,
+      editable: false,
     },
     {
       title: "Room Amenity",
       dataIndex: "roomAmenity",
       width: "15%",
-      editable: true,
+      editable: false,
     },
     {
       title: "Room Rank",
       dataIndex: "roomRank",
       width: "10%",
-      editable: true,
+      editable: false,
     },
     {
       title: "Room Price",
@@ -354,7 +366,8 @@ const AllRooms = () => {
       <div className={cx("all__rooms--form")}>
         <Title level={5}>Room Summary</Title>
         <Form form={form} component={false}>
-          <Table
+          {
+            data.length ? <Table
             components={{
               body: {
                 cell: EditableCell,
@@ -367,7 +380,10 @@ const AllRooms = () => {
             pagination={{
               onChange: cancel,
             }}
-          />
+            // loading={!data.length && <SpinFC />}
+          /> : <Loading/>
+          }
+          
         </Form>
       </div>
     </div>

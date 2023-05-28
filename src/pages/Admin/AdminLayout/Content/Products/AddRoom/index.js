@@ -21,6 +21,7 @@ import styles from "./AddRoom.module.scss";
 import { handlePushData } from "../../../../../../utils/database";
 import { v4 as uuidv4 } from "uuid";
 import uploadFile from "../../../../../../utils/storage";
+import { ToastError, ToastSuccess } from "../../../../../../utils/toast";
 const { Title, Text } = Typography;
 
 let cx = classNames.bind(styles);
@@ -77,7 +78,7 @@ const AddRoom = () => {
     );
   };
 
-  const dummyRequest = ({ file, onSuccess }) => {
+  const dummyRequest = ({ onSuccess }) => {
     setTimeout(() => {
       onSuccess("ok");
     }, 0);
@@ -110,12 +111,15 @@ const AddRoom = () => {
         await listImage.push({ imageId: uuidv4(), imageUrl: res });
         value.roomImage = listImage;
         if (index === fileList.length - 1) {
+          value.key = uuidv4();
           value.roomCreatedAt = JSON.stringify(new Date());
           handlePushData("/admin/create-room/rooms", value);
+          ToastSuccess("Add new room success", 2000);
         }
       });
     } catch (error) {
       console.log(error);
+      ToastError("Opps. Something went wrong. Add room failed !!");
     }
   };
   return (
