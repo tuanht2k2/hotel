@@ -1,6 +1,9 @@
-import { useEffect, useState } from 'react';
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import routes from "./routes";
+import "antd/dist/reset.css";
+import "./App.css";
+import { useEffect, useState } from "react";
 import { useDispatch } from 'react-redux';
-
 import { onAuthStateChanged } from 'firebase/auth';
 import { auth } from './firebase';
 
