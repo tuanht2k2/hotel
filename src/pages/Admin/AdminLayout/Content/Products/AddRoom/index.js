@@ -13,8 +13,6 @@ import {
   Modal,
   message,
 } from "antd";
-import { Typography } from "antd";
-
 import { useState } from "react";
 import classNames from "classnames/bind";
 import styles from "./AddRoom.module.scss";
@@ -22,7 +20,7 @@ import { handlePushData } from "../../../../../../utils/database";
 import { v4 as uuidv4 } from "uuid";
 import uploadFile from "../../../../../../utils/storage";
 import { ToastError, ToastSuccess } from "../../../../../../utils/toast";
-const { Title, Text } = Typography;
+import ItemTitle from "../../../../AdminComponent/ItemTitle";
 
 let cx = classNames.bind(styles);
 
@@ -124,43 +122,16 @@ const AddRoom = () => {
   };
   return (
     <div className={cx("add__room--container")}>
-      <div className={cx("add__room--title")}>
-        <Row style={{ backgroundColor: "#F8F9FB", padding: "0 40px" }}>
-          <Col span={24}>
-            <Typography
-              style={{
-                marginBottom: 10,
-                fontFamily: "monospace",
-              }}
-            >
-              <Title style={{ margin: 0 }} level={3}>
-                Add new room
-              </Title>
-              <Text style={{ opacity: 0.6 }}>
-                This is the page to create new room
-              </Text>
-            </Typography>
-          </Col>
-        </Row>
-      </div>
-
+      <ItemTitle
+        title="Add new room"
+        textContent="This is the page to create new room"
+      />
       <div className={cx("add__room--content")}>
-        <Row>
-          <div className={cx("room__content--title")}>
-            <Typography
-              style={{
-                marginBottom: 10,
-                fontFamily: "monospace",
-              }}
-            >
-              <Title style={{ margin: 0 }} level={3}>
-                Field Information
-              </Title>
-              <Text style={{ opacity: 0.6 }}>
-                You must fill in this fields to create new room
-              </Text>
-            </Typography>
-          </div>
+        <Row className={cx('room__content--title')}>
+          <ItemTitle
+            title="Field Information"
+            textContent="You must fill in this fields to create new room"
+          />
         </Row>
 
         <Row>
@@ -183,10 +154,33 @@ const AddRoom = () => {
               >
                 <Row>
                   <Col span={18}>
-                    <Form.Item required name={"roomName"} label="Room Name">
-                      <Input name="roomName" />
+                    <Form.Item
+                      required
+                      name={"roomName"}
+                      label="Room Name"
+                      rules={[
+                        {
+                          required: true,
+                          message: "Room Name is required",
+                        },
+                      ]}
+                    >
+                      <Input
+                        name="roomName"
+                        placeholder="Type your room name"
+                      />
                     </Form.Item>
-                    <Form.Item required name={"roomType"} label="Room Type">
+                    <Form.Item
+                      required
+                      name={"roomType"}
+                      label="Room Type"
+                      rules={[
+                        {
+                          required: true,
+                          message: "Room Type is required",
+                        },
+                      ]}
+                    >
                       <Radio.Group name="roomType">
                         <Radio value="single"> Single </Radio>
                         <Radio value="double"> Double </Radio>
@@ -213,7 +207,17 @@ const AddRoom = () => {
                         <Select.Option value="blue">Blue</Select.Option>
                       </Select>
                     </Form.Item>
-                    <Form.Item required name={"roomRank"} label="Room Rank">
+                    <Form.Item
+                      required
+                      name={"roomRank"}
+                      label="Room Rank"
+                      rules={[
+                        {
+                          required: true,
+                          message: "Room Rank is required",
+                        },
+                      ]}
+                    >
                       <Radio.Group name="roomRank">
                         <Radio value="normal">Normal</Radio>
                         <Radio value="superior"> Superior </Radio>
@@ -225,6 +229,12 @@ const AddRoom = () => {
                           required
                           name={"roomCreatedAt"}
                           label="Create at"
+                          rules={[
+                            {
+                              required: true,
+                              message: "Room Created At is required",
+                            },
+                          ]}
                         >
                           <DatePicker
                             name="roomCreatedAt"
@@ -237,17 +247,28 @@ const AddRoom = () => {
                           required
                           label="Room Price"
                           name={"roomPrice"}
+                          rules={[
+                            {
+                              required: true,
+                              message: "Room Price is required",
+                            },
+                          ]}
                         >
                           <InputNumber
                             style={{ width: "100%" }}
                             name="roomPrice"
+                            placeholder="Type your room price"
                           />
                         </Form.Item>
                       </Col>
                     </Row>
 
                     <Form.Item name={"roomDesc"} label="Room Description">
-                      <TextArea name="roomDesc" rows={4} />
+                      <TextArea
+                        placeholder="Type your room description"
+                        name="roomDesc"
+                        rows={4}
+                      />
                     </Form.Item>
                     <Row>
                       <Col
