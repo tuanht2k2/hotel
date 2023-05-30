@@ -64,6 +64,12 @@ const routes = [
     element: <ManageOrders />,
     layout: AdminLayout,
   },
+  {
+    path: '/admin/profile',
+    type: 'admin',
+    element: <Profile />,
+    layout: AdminLayout,
+  },
   { path: 'rooms/:roomId/images/:imageIndex', type: 'public', element: <Image /> },
 ];
 
