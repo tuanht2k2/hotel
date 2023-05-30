@@ -1,6 +1,6 @@
-export const signInAction = (uid) => ({
+export const signInAction = (uid, role) => ({
   type: 'SIGN_IN',
-  payload: uid,
+  payload: { uid, role },
 });
 
 export const signOutAction = () => ({

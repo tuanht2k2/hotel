@@ -168,6 +168,7 @@ function SignUp() {
         email: formData.email.value,
         phoneNumber: formData.phoneNumber.value,
         address: formData.address.value,
+        role: 'client',
       };
 
       handleSetData(`users/${user.uid}`, userData).then(() => {
@@ -282,6 +283,7 @@ function SignUp() {
                 onClick={() => {
                   handleNavigate();
                 }}
+                variant="contained"
               >
                 Đăng nhập
               </Button>

@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { Fragment, useEffect, useState } from 'react';
 
 import classNames from 'classnames/bind';
@@ -20,6 +20,10 @@ const cx = classNames.bind(style);
 function Header() {
   const [user, setUser] = useState(null);
   const [isLoaded, setIsLoaded] = useState(false);
+
+  const location = useLocation();
+  const split = location.pathname.split('/');
+  const path = '/' + split[split.length - 1];
 
   const HEADER = [
     {
@@ -67,10 +71,17 @@ function Header() {
         const TippyDropdown = item.tippyDropdown || Fragment;
         return (
           <TippyDropdown key={`header__tippy--dropdown${index}`}>
-            <Link key={`header-item-${index}`} className={cx('header__item')} to={item.to}>
+            <Link
+              key={`header-item-${index}`}
+              className={cx(
+                'header__item',
+                item.to === path || (item.to === '/home' && path === '/') ? 'active' : ''
+              )}
+              to={item.to}
+            >
               {item.icon && <div className={cx('item__icon__wrapper')}>{item.icon}</div>}
               {item.tag && item.tag}
-              <div className={cx('item--title')}>{item.title}</div>
+              <div className={cx('item__title')}>{item.title}</div>
             </Link>
           </TippyDropdown>
         );

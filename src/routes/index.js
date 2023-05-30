@@ -6,6 +6,7 @@ import {
   Bookings,
   Room,
   Image,
+  Booked,
 } from "../pages";
 import { DefaultLayout } from "../layouts";
 import {
@@ -30,39 +31,40 @@ const routes = [
     element: <Room />,
     layout: DefaultLayout,
   },
-  { path: "/sign-in", type: "public", element: <SignIn /> },
-  { path: "/sign-up", type: "public", element: <SignUp /> },
+  { path: 'booked', type: 'private', element: <Booked />, layout: DefaultLayout },
+  { path: '/sign-in', type: 'public', element: <SignIn /> },
+  { path: '/sign-up', type: 'public', element: <SignUp /> },
   {
-    path: "/admin/all-rooms",
-    type: "public",
+    path: '/admin',
+    type: 'admin',
     element: <AllRooms />,
     layout: AdminLayout,
   },
   {
-    path: "/admin/add-rooms",
-    type: "public",
+    path: '/admin/all-rooms',
+    type: 'admin',
+    element: <AllRooms />,
+    layout: AdminLayout,
+  },
+  {
+    path: '/admin/add-rooms',
+    type: 'admin',
     element: <AddRoom />,
     layout: AdminLayout,
   },
   {
-    path: "/admin/all-orders",
-    type: "public",
+    path: '/admin/all-orders',
+    type: 'admin',
     element: <AllOrders />,
     layout: AdminLayout,
   },
   {
-    path: "/admin/manage-orders",
-    type: "public",
+    path: '/admin/manage-orders',
+    type: 'admin',
     element: <ManageOrders />,
     layout: AdminLayout,
   },
-  {
-    path: "/admin/profile",
-    type: "public",
-    element: <Profile />,
-    layout: AdminLayout,
-  },
-  { path: "/images/:imageId", type: "public", element: <Image /> },
+  { path: 'rooms/:roomId/images/:imageIndex', type: 'public', element: <Image /> },
 ];
 
 export default routes;

@@ -1,4 +1,4 @@
-import { Link, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 
 import { auth } from '../../firebase';
@@ -21,9 +21,11 @@ const cx = classNames.bind(style);
 
 function Room() {
   const { roomId } = useParams();
+
   const [roomData, setRoomData] = useState({});
   const [user, setUser] = useState(null);
   const [isLoaded, setIsLoaded] = useState(false);
+  const [ratings, setRatings] = useState(null);
 
   const { handleToggleTippy, requireSignInRender } = useRequireSignIn();
   const { handleToggleBookingTippy, bookingTippyRender } = useBooking(roomId, roomData);
@@ -33,13 +35,36 @@ function Room() {
 
     const roomData = await handleGetData(roomPath).then((snapshot) => snapshot.val() || {});
     setRoomData(roomData);
+
+    // get the rating list data of this room
+    if (roomData.roomRatings) {
+      const promises = Object.keys(roomData.roomRatings).map((ratingKey) =>
+        handleGetData(`ratings/${ratingKey}`).then((snapshot) => snapshot.val())
+      );
+
+      Promise.all(promises).then((res) => {
+        res && setRatings(res);
+      });
+    }
+  };
+
+  const handleGetAvgStar = (ratings) => {
+    if (!ratings) return;
+
+    let initialAvg = 0;
+    const result = Object.keys(ratings).reduce(
+      (acc, rating) => acc + ratings[rating].data.star,
+      initialAvg
+    );
+
+    const avg = Math.round((result / Object.keys(ratings).length) * 10) / 10;
+    return avg;
   };
 
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
       if (user) {
         setUser(user.uid);
-      } else {
       }
     });
 
@@ -70,19 +95,20 @@ function Room() {
           <div className={cx('room__info__detail__wrapper')}>
             <div className={cx('room__info__detail__rating__wrapper', 'detail-item')}>
               <div className={cx('room__info__detail__rating__label', 'label')}>Đánh giá:</div>
-              <div className={cx('room__info__detail__rating__value', 'value')}>4.9</div>
+              <div className={cx('room__info__detail__rating__value', 'value--orange')}>
+                {ratings ? handleGetAvgStar(ratings) : null}
+              </div>
               <img className={cx('room__info__detail__rating__icon')} src={images.starIcon} />
             </div>
             <div className={cx('room__info__detail__price__wrapper', 'detail-item')}>
               <div className={cx('room__info__detail__price__label', 'label')}>Giá tiền:</div>
-              <div className={cx('room__info__detail__price__value', 'value')}>
-                {' '}
+              <div className={cx('room__info__detail__price__value', 'value--orange')}>
                 {`${roomData.roomPrice} VNĐ/đêm`}
               </div>
             </div>
             <div className={cx('room__info__detail__type__wrapper', 'detail-item')}>
               <div className={cx('room__info__detail__type__label', 'label')}>Loại phòng:</div>
-              <div className={cx('room__info__detail__type__value', 'value')}>
+              <div className={cx('room__info__detail__type__value', 'value--orange')}>
                 {roomData.roomType === 'single' ? 'Phòng đôi' : 'Phòng đơn'}
               </div>
             </div>
@@ -90,16 +116,14 @@ function Room() {
               <div className={cx('room__info__detail__classification__label', 'label')}>
                 Hạng phòng:
               </div>
-              <div className={cx('room__info__detail__classification__value', 'value')}>
+              <div className={cx('room__info__detail__classification__value', 'value--orange')}>
                 {roomData.roomRank === 'superior' ? 'Phòng cao cấp' : 'Phòng thường'}
               </div>
             </div>
             <div className={cx('room__info__detail__desc__wrapper', 'detail-item')}>
-              <div className={cx('room__info__detail__desc__label', 'label')}>Mô tả:</div>
-              <div className={cx('room__info__detail__desc__values', 'value')}>
-                <div className={cx('room__info__detail__desc__values__item')}>
-                  {roomData.roomDesc}
-                </div>
+              <div className={cx('room__info__detail__desc__label', 'label')}>
+                Mô tả:
+                <div className={cx('room__info__detail__desc__value')}>{roomData.roomDesc}</div>
               </div>
             </div>
           </div>
@@ -121,7 +145,7 @@ function Room() {
 
         {/* comments  */}
         <div className={cx('room__interaction__wrapper')}>
-          <Comments roomId={123} handleToggleSignInTippy={handleToggleTippy} />
+          <Comments roomId={roomId} roomData={roomData} />
         </div>
       </div>
 
