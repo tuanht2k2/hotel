@@ -8,42 +8,25 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faAngleDown, faBell } from "@fortawesome/free-solid-svg-icons";
 import { Button, Dropdown } from "antd";
 import { useLocation } from "react-router-dom";
+
 let cx = classNames.bind(styles);
 const items = [
   {
     key: "1",
     label: (
-      <a
-        target="_blank"
-        rel="noopener noreferrer"
-        href="https://www.antgroup.com"
-      >
-        1st menu item
-      </a>
+   <Link to={'/home'}>Return UserPage</Link>
     ),
   },
   {
     key: "2",
     label: (
-      <a
-        target="_blank"
-        rel="noopener noreferrer"
-        href="https://www.aliyun.com"
-      >
-        2nd menu item
-      </a>
+      <Link to={'/settings'}>Settings</Link>
     ),
   },
   {
     key: "3",
     label: (
-      <a
-        target="_blank"
-        rel="noopener noreferrer"
-        href="https://www.luohanacademy.com"
-      >
-        3rd menu item
-      </a>
+      <Link>Log out</Link>
     ),
   },
 ];

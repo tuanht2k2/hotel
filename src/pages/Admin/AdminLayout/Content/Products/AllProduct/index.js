@@ -17,11 +17,15 @@ import styles from "./AllProducts.module.scss";
 import Title from "antd/es/typography/Title";
 import {
   handleGetData,
+  handleGetDataRef,
+  handleRemoveData,
   handleUpdateData,
 } from "../../../../../../utils/database";
 import { ToastError, ToastSuccess } from "../../../../../../utils/toast";
-// import SpinFC from "antd/es/spin";
-import Loading from '../../../../AdminComponent/Loading/Loading'
+import Loading from "../../../../AdminComponent/Loading/Loading";
+import { useQuery } from "react-query";
+import ItemTitle from "../../../../AdminComponent/ItemTitle";
+import { onValue } from "firebase/database";
 const { Search } = Input;
 let cx = classNames.bind(styles);
 
@@ -66,42 +70,50 @@ const AllRooms = () => {
   const [editingKey, setEditingKey] = useState("");
   const [roomIds, setRoomIds] = useState([]);
   const [changeData, setChangeData] = useState([]);
+
   const getListRooms = async () => {
     try {
-      const listRooms = await handleGetData("/admin/create-room/rooms");
-      const dataRooms = [];
-      const listKeys = [];
-      for (let key in listRooms.val()) {
-        const roomData = listRooms.val()[key];
-        // console.log(roomData.roomImage[0]);
-        roomData.roomImage ? (
-          (roomData.roomImage = (
+      const roomsPath = `admin/create-room/rooms/`;
+      const roomsRef = handleGetDataRef(roomsPath);
+      onValue(roomsRef, async () => {
+        const listRooms = await handleGetData("/admin/create-room/rooms");
+        const dataRooms = [];
+        const listKeys = [];
+        for (let key in listRooms.val()) {
+          const roomData = listRooms.val()[key];
+          roomData.roomId = key;
+          roomData.roomImage ? (
+            (roomData.roomImage = (
+              <Image
+                width={"100%"}
+                height={80}
+                src={roomData.roomImage[0].imageUrl}
+                onError={(err) => {
+                  console.log(err);
+                }}
+              />
+            ))
+          ) : (
             <Image
-              width={150}
-              src={roomData.roomImage[0].imageUrl}
-              onError={(err) => {
-                console.log(err);
-              }}
-              // rootClassName={cx("allRoom__image--preview")}
+              width={"100%"}
+              height={80}
+              src="https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png"
             />
-          ))
-        ) : (
-          <Image
-            width={150}
-            src="https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png"
-          />
-        );
-        dataRooms.push(roomData);
-        listKeys.push(key);
-      }
-      setData([...dataRooms]);
-      setChangeData([...dataRooms]);
-      setRoomIds([...listKeys]);
+          );
+          dataRooms.push(roomData);
+          listKeys.push(key);
+        }
+        setData([...dataRooms]);
+        setChangeData([...dataRooms]);
+        setRoomIds([...listKeys]);
+      });
     } catch (error) {
       console.log(error);
     }
   };
 
+  const query = useQuery("all-rooms", getListRooms);
+  const { isLoading } = query;
   const onSearchByName = (value) => {
     const filterRooms = changeData.filter((room) => {
       if (room.roomName.toLowerCase().includes(value)) {
@@ -185,19 +197,13 @@ const AllRooms = () => {
     {
       title: "Room Image",
       dataIndex: "roomImage",
-      width: "15%",
+      width: "12%",
       editable: false,
     },
     {
       title: "Room Name",
       dataIndex: "roomName",
-      width: "15%",
-      editable: true,
-    },
-    {
-      title: "Room Description",
-      dataIndex: "roomDesc",
-      width: "20%",
+      width: "10%",
       editable: true,
     },
     {
@@ -209,7 +215,7 @@ const AllRooms = () => {
     {
       title: "Room Amenity",
       dataIndex: "roomAmenity",
-      width: "15%",
+      width: "10%",
       editable: false,
     },
     {
@@ -221,7 +227,13 @@ const AllRooms = () => {
     {
       title: "Room Price",
       dataIndex: "roomPrice",
-      width: "15%",
+      width: "10%",
+      editable: true,
+    },
+    {
+      title: "Room Description",
+      dataIndex: "roomDesc",
+      width: "20%",
       editable: true,
     },
     {
@@ -255,6 +267,28 @@ const AllRooms = () => {
         );
       },
     },
+    {
+      title: "Delete Room",
+      dataIndex: "",
+      key: "x",
+      render: (record) => {
+        return (
+          <Typography.Link
+            onClick={() => {
+              try {
+                handleRemoveData(`/admin/create-room/rooms/${record.roomId}`);
+                ToastSuccess("Remove room successfully");
+              } catch (error) {
+                ToastError("Opps. Something went wrong. Remove room failed");
+                throw new Error(error);
+              }
+            }}
+          >
+            Delete
+          </Typography.Link>
+        );
+      },
+    },
   ];
 
   const mergedColumns = columns.map((col) => {
@@ -266,7 +300,6 @@ const AllRooms = () => {
       onCell: (record) => {
         return {
           record,
-          // inputType: col.dataIndex === "age" ? "number" : "text",
           dataIndex: col.dataIndex,
           title: col.title,
           editing: isEditing(record),
@@ -276,115 +309,116 @@ const AllRooms = () => {
   });
   return (
     <div className={cx("all__rooms--container")}>
-      <Row>
-        <Col span={24}>
-          <Title level={3}>Manage All Room Information</Title>
-        </Col>
-      </Row>
-      <div className={cx("all__rooms--title")}>
-        <Row>
-          <Col span={8} style={{ marginRight: "20px" }}>
-            <Title level={5}>What are you looking for ?</Title>
-            <Search
-              placeholder="Type to search by room name"
-              allowClear
-              enterButton="Search"
-              size="medium"
-              onSearch={onSearchByName}
-            />
-          </Col>
+      <ItemTitle
+        title="Manage All Room Information"
+        textContent="You can view and manage all rooms in this page"
+      ></ItemTitle>
+      <div className={cx("all__room--main")}>
+        <div className={cx("all__rooms--title")}>
+          <Row>
+            <Col span={8} style={{ marginRight: "20px" }}>
+              <Title level={5}>What are you looking for ?</Title>
+              <Search
+                placeholder="Type to search by room name"
+                allowClear
+                enterButton="Search"
+                size="medium"
+                onSearch={onSearchByName}
+              />
+            </Col>
 
-          <Col span={6} style={{ marginRight: "20px" }}>
-            <Title level={5}>Room Type</Title>
-            <Select
-              style={{ width: "100%" }}
-              showSearch
-              placeholder="Select room type"
-              optionFilterProp="children"
-              onChange={onChangeRoom}
-              onSearch={onSearch}
-              filterOption={(input, option) =>
-                (option?.label ?? "")
-                  .toLowerCase()
-                  .includes(input.toLowerCase())
-              }
-              allowClear={true}
-              options={[
-                {
-                  value: "single",
-                  label: "Single",
-                },
-                {
-                  value: "double",
-                  label: "Double",
-                },
-              ]}
-            />
-          </Col>
+            <Col span={6} style={{ marginRight: "20px" }}>
+              <Title level={5}>Room Type</Title>
+              <Select
+                style={{ width: "100%" }}
+                showSearch
+                placeholder="Select room type"
+                optionFilterProp="children"
+                onChange={onChangeRoom}
+                onSearch={onSearch}
+                filterOption={(input, option) =>
+                  (option?.label ?? "")
+                    .toLowerCase()
+                    .includes(input.toLowerCase())
+                }
+                allowClear={true}
+                options={[
+                  {
+                    value: "single",
+                    label: "Single",
+                  },
+                  {
+                    value: "double",
+                    label: "Double",
+                  },
+                ]}
+              />
+            </Col>
 
-          <Col span={6} style={{ marginRight: "20px" }}>
-            <Title level={5}>Room Rank</Title>
-            <Select
-              style={{ width: "100%" }}
-              showSearch
-              placeholder="Select room rank"
-              optionFilterProp="children"
-              onChange={onChangeRoom}
-              onSearch={onSearch}
-              filterOption={(input, option) =>
-                (option?.label ?? "")
-                  .toLowerCase()
-                  .includes(input.toLowerCase())
-              }
-              allowClear={true}
-              options={[
-                {
-                  value: "normal",
-                  label: "Normal",
-                },
-                {
-                  value: "superior",
-                  label: "Superior",
-                },
-              ]}
-            />
-          </Col>
+            <Col span={6} style={{ marginRight: "20px" }}>
+              <Title level={5}>Room Rank</Title>
+              <Select
+                style={{ width: "100%" }}
+                showSearch
+                placeholder="Select room rank"
+                optionFilterProp="children"
+                onChange={onChangeRoom}
+                onSearch={onSearch}
+                filterOption={(input, option) =>
+                  (option?.label ?? "")
+                    .toLowerCase()
+                    .includes(input.toLowerCase())
+                }
+                allowClear={true}
+                options={[
+                  {
+                    value: "normal",
+                    label: "Normal",
+                  },
+                  {
+                    value: "superior",
+                    label: "Superior",
+                  },
+                ]}
+              />
+            </Col>
 
-          <Col span={2} style={{ alignSelf: "flex-end" }}>
-            <Button
-              style={{
-                width: "100%",
-                backgroundColor: "#1677ff",
-                color: "#fff",
-              }}
-            >
-              Search
-            </Button>
-          </Col>
-        </Row>
-      </div>
-      <div className={cx("all__rooms--form")}>
-        <Title level={5}>Room Summary</Title>
-        <Form form={form} component={false}>
-          {
-            data.length ? <Table
-            components={{
-              body: {
-                cell: EditableCell,
-              },
-            }}
-            bordered
-            dataSource={data}
-            columns={data && mergedColumns}
-            rowClassName="editable-row"
-            pagination={{
-              onChange: cancel,
-            }}
-            // loading={!data.length && <SpinFC />}
-          /> : <Loading/>
-          }
-          
-        </Form>
+            <Col span={2} style={{ alignSelf: "flex-end" }}>
+              <Button
+                style={{
+                  width: "100%",
+                  backgroundColor: "#1677ff",
+                  color: "#fff",
+                }}
+              >
+                Search
+              </Button>
+            </Col>
+          </Row>
+        </div>
+        <div className={cx("all__rooms--form")}>
+          <Title level={5}>Room Summary</Title>
+          <Form form={form} component={false}>
+            {!isLoading ? (
+              <Table
+                components={{
+                  body: {
+                    cell: EditableCell,
+                  },
+                }}
+                bordered
+                dataSource={data}
+                columns={data && mergedColumns}
+                rowClassName="editable-row"
+                pagination={{
+                  onChange: cancel,
+                }}
+              />
+            ) : (
+              <Loading />
+            )}
+          </Form>
+        </div>
       </div>
     </div>
   );

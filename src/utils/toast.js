@@ -1,5 +1,4 @@
 import { Bounce, toast } from "react-toastify";
-import { Slide } from "react-toastify";
 
 export const ToastSuccess = (message, time) => {
   toast["success"](message || "success", {
