@@ -2,6 +2,7 @@
   padding: 10px;
   background-color: var(--primary-color);
   border-radius: 0 0 10px 10px;
+  user-select: none;
 }
 
 .tippy--dropdown__item__wrapper {

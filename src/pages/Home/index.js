@@ -16,7 +16,7 @@ function Home() {
           <div className={cx('home__carousel__item__wrapper')}>
             <img
               className={cx('home__carousel__item__img')}
-              src="https://wallpapers.com/images/featured/sdr508awonqxixqe.jpg"
+              src="https://cdn1.tablethotels.com/media/ecs/global/email/assets/20200402_Zoom/TabletHotels_Public-Mirrored.jpg"
             />
           </div>
           <div className={cx('home__carousel__item__wrapper')}>
@@ -28,7 +28,7 @@ function Home() {
           <div className={cx('home__carousel__item__wrapper')}>
             <img
               className={cx('home__carousel__item__img')}
-              src="https://pixelz.cc/wp-content/uploads/2018/12/costa-adeje-gran-hotel-pool-spain-uhd-4k-wallpaper.jpg"
+              src="https://cdn-clakn.nitrocdn.com/ZMLOYQkeFDkqDYTmCLYthpixBbhBLKdj/assets/static/optimized/wp-content/uploads/2018/03/30ee1df08c055fd481808818f999d1ed.crew-89808-unsplash.jpg"
             />
           </div>
         </Carousel>

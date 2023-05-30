@@ -22,8 +22,11 @@
 
       .comments__header__rate__quantity {
         margin-left: auto;
-        font-size: 16px;
-        font-family: EncodeSans;
+        display: flex;
+        align-items: center;
+        font-size: 15px;
+        font-family: EncodeSans-Semibold;
+        color: var(--text-color-7);
       }
 
       .comments__header__rate__quantity__text {
@@ -32,70 +35,29 @@
 
       .comments__header__rate__quantity__img {
         margin-left: 5px;
-        height: 30px;
-        width: 30px;
+        height: 20px;
+        width: 20px;
       }
     }
   }
 
   .comments--main__wrapper {
-    .comments--main__create__comment {
-      margin-top: 20px;
-
-      .comments--main__create__comment__header {
-        font-size: 18px;
-      }
-
-      .comments--main__create__comment__content {
-        margin-top: 10px;
-        border: 1px solid var(--gray-1);
-        border-radius: 10px;
-        padding: 20px;
-      }
-
-      .comments--main__create__comment__content__rating {
-        display: flex;
-        align-items: center;
-        font-family: EncodeSans-Semibold;
-        font-size: 17px;
-      }
-
-      .comments--main__create__comment__content__main {
-        padding: 20px 0;
-        display: flex;
-
-        .comments--main__create__comment__content__main__user__avatar {
-          width: 40px;
-          height: 40px;
-        }
-
-        .comments--main__create__comment__content__main__textarea {
-          margin: 0 20px;
-          flex: 1;
-          padding: 10px;
-          font-size: 18px;
-          border: 1px solid var(--gray-1);
-          border-radius: 10px;
-          outline: none;
-        }
-
-        .comments--main__create__comment__content__main__submit__comment {
-          * {
-            font-family: EncodeSans-Semibold;
-            color: white;
-          }
-        }
-      }
-    }
-
     .comment--main__signin__btn {
       margin-top: 20px;
     }
 
     .comments--main__comment__list {
       margin-top: 20px;
-      padding: 10px;
-      border-top: 1px solid var(--gray-1);
+      padding: 10px 0;
+      border-top: 1px solid orangered;
+
+      .comments--main__comment__list__empty {
+        width: 100%;
+        text-align: center;
+        font-size: 20px;
+        font-family: EncodeSans-Semibold;
+        color: var(--text-color-8);
+      }
     }
   }
 }

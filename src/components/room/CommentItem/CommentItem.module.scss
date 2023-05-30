@@ -1,6 +1,13 @@
 .comment__wrapper {
   width: 100%;
+  border: 1px solid var(--gray-1);
+  border-radius: 10px;
+  padding: 10px;
   display: flex;
+
+  & + & {
+    margin-top: 10px;
+  }
 
   .comment__user__img {
     height: 40px;

@@ -42,6 +42,21 @@
       color: var(--text-color-8);
     }
 
+    .use__booking__content__order__price {
+      padding-top: 10px;
+      display: flex;
+      align-items: center;
+      font-size: 17px;
+      font-family: EncodeSans-Semibold;
+      color: var(--text-color-8);
+
+      .use__booking__content__order__price__value {
+        margin-left: 5px;
+        font-family: EncodeSans-Semibold;
+        color: orangered;
+      }
+    }
+
     .use__booking__content__button__btn {
       margin-top: 20px;
 

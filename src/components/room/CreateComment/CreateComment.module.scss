@@ -1,0 +1,109 @@
+.comments--main__create__comment {
+  margin-top: 20px;
+
+  .comments--main__create__comment__header {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    font-size: 18px;
+  }
+
+  .comments--main__create__comment__content {
+    margin-top: 10px;
+    border: 1px solid var(--gray-1);
+    border-radius: 10px;
+    padding: 20px;
+  }
+
+  .comments--main__create__comment__content__rating {
+    display: flex;
+    align-items: center;
+    font-family: EncodeSans-Semibold;
+    font-size: 17px;
+  }
+
+  .comments--main__create__comment__content__main {
+    padding: 20px 20px 0 20px;
+    // border: 1px solid var(--gray-1);
+    border-radius: 10px;
+    display: flex;
+
+    .comments--main__create__comment__content__main__user__avatar {
+      width: 40px;
+      height: 40px;
+    }
+
+    .comments--main__create__comment__content__main--existing {
+      margin-left: 10px;
+      border: 1px solid var(--gray-1);
+      border-radius: 20px;
+      background-color: var(--gray-0);
+      padding: 5px 15px 15px 15px;
+
+      .comments--main__create__comment__content__main--existing__top {
+        display: flex;
+        align-items: center;
+
+        .comments--main__create__comment__content__main--existing__detail {
+          font-size: 16px;
+          color: var(--text-color-10);
+          font-family: EncodeSans-Semibold;
+
+          .comments--main__create__comment__content__main--existing__detail__text {
+            font-size: 18px;
+            font-family: EncodeSans;
+          }
+        }
+
+        .comments--main__create__comment__content__main--existing__action {
+          margin-left: 20px;
+        }
+
+        .comments--main__create__comment__content__main--existing__action__tippy__wrapper {
+          background-color: white;
+          border-radius: 10px;
+          box-shadow: var(--box-shadow-1);
+          padding: 5px;
+          user-select: none;
+
+          .comments--main__create__comment__content__main--existing__action__tippy__item {
+            border-radius: 10px;
+            padding: 10px;
+            font-size: 16px;
+            font-family: EncodeSans-Semibold;
+            color: var(--text-color-9);
+            cursor: pointer;
+            transition: 0.3s;
+
+            &:hover {
+              background-color: var(--gray-0);
+            }
+          }
+        }
+      }
+
+      .comments--main__create__comment__content__main--existing__bottom {
+        font-family: EncodeSans-Semibold;
+        font-size: 12px;
+        color: var(--text-color-8);
+      }
+    }
+
+    .comments--main__create__comment__content__main__textarea {
+      margin: 0 20px;
+      flex: 1;
+      padding: 10px;
+      font-size: 18px;
+      border: 1px solid var(--gray-1);
+      border-radius: 10px;
+      outline: none;
+    }
+
+    .comments--main__create__comment__content__main__submit__comment {
+      * {
+        font-family: EncodeSans-Semibold;
+        color: white;
+      }
+    }
+  }
+}

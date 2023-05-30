@@ -1,5 +1,5 @@
 import { Link, useNavigate } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 import HeadlessTippy from '@tippyjs/react/headless';
 import classNames from 'classnames/bind';
@@ -7,7 +7,13 @@ import classNames from 'classnames/bind';
 import { auth } from '../../../../../firebase';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faBed, faGear, faRightFromBracket, faUser } from '@fortawesome/free-solid-svg-icons';
+import {
+  faBed,
+  faGear,
+  faPeopleRoof,
+  faRightFromBracket,
+  faUser,
+} from '@fortawesome/free-solid-svg-icons';
 
 import { signOutAction } from '../../../../../actions/user';
 
@@ -16,6 +22,8 @@ import style from './UserDropdown.module.scss';
 const cx = classNames.bind(style);
 
 function UserDropdown({ children }) {
+  const user = useSelector((state) => state.user);
+
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -32,7 +40,7 @@ function UserDropdown({ children }) {
     <HeadlessTippy
       interactive
       trigger="click"
-      offset={[2, 10]}
+      offset={[0, 10]}
       placement="bottom"
       render={() => (
         <div className={cx('sidebar__item__tippy--dropdown-wrapper')}>
@@ -42,6 +50,14 @@ function UserDropdown({ children }) {
             </div>
             <div className={cx('tippy--dropdown__item__title')}>Thông tin cá nhân</div>
           </Link>
+          {user.role === 'admin' && (
+            <Link to={'/admin'} className={cx('tippy--dropdown__item__wrapper')}>
+              <div className={cx('tippy--dropdown__item__icon__wrapper')}>
+                <FontAwesomeIcon icon={faPeopleRoof} />
+              </div>
+              <div className={cx('tippy--dropdown__item__title')}>Chuyển tới trang quản lý</div>
+            </Link>
+          )}
           <Link to={'/booked'} className={cx('tippy--dropdown__item__wrapper')}>
             <div className={cx('tippy--dropdown__item__icon__wrapper')}>
               <FontAwesomeIcon icon={faBed} />
