@@ -5,3 +5,4 @@ export { default as AdminLayout } from "./Admin/AdminLayout/layout/";
 export { default as Bookings } from './Bookings';
 export { default as Room } from './Room';
 export { default as Image } from './Image';
+export { default as Booked } from './Booked';

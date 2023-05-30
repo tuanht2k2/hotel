@@ -110,7 +110,7 @@
 
   .tippy__pop--up__content {
     border-radius: 15px;
-    background-color: var(--gray-1);
+    background-color: white;
     padding: 20px 30px 30px 30px;
     display: flex;
     flex-direction: column;
@@ -132,6 +132,10 @@
       width: 60px;
       height: 60px;
       border-radius: 50%;
+    }
+
+    button {
+      margin-top: 20px;
     }
 
     a {
