@@ -1,33 +1,24 @@
-import {
-  Home,
-  SignIn,
-  SignUp,
-  AdminLayout,
-  Bookings,
-  Room,
-  Image,
-  Booked,
-} from "../pages";
-import { DefaultLayout } from "../layouts";
+import { Home, SignIn, SignUp, AdminLayout, Bookings, Room, Image, Booked } from '../pages';
+import { DefaultLayout } from '../layouts';
 import {
   AllOrders,
   AllRooms,
   AddRoom,
   ManageOrders,
   Profile,
-} from "../pages/Admin/AdminLayout/Content";
+} from '../pages/Admin/AdminLayout/Content';
 
 const routes = [
-  { path: "/home", type: "public", element: <Home />, layout: DefaultLayout },
+  { path: '/', type: 'public', element: <Home />, layout: DefaultLayout },
   {
-    path: "/bookings",
-    type: "public",
+    path: '/bookings',
+    type: 'public',
     element: <Bookings />,
     layout: DefaultLayout,
   },
   {
-    path: "/rooms/:roomId",
-    type: "public",
+    path: '/rooms/:roomId',
+    type: 'public',
     element: <Room />,
     layout: DefaultLayout,
   },

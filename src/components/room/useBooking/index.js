@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 
 import classNames from 'classnames/bind';
+import { useNavigate } from 'react-router-dom';
 
 import HeadlessTippy from '@tippyjs/react/headless';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -30,6 +31,8 @@ function useBooking(roomId, roomData) {
   const [isVisible, setIsVisible] = useState(false);
   const [isDatePickerError, setIsDatePickerError] = useState(false);
   const [isSubmitLoading, setIsSubmitLoading] = useState(false);
+
+  const navigate = useNavigate();
 
   const handleToggleTippy = () => {
     setIsVisible((prev) => !prev);
@@ -132,19 +135,17 @@ function useBooking(roomId, roomData) {
           address: form.address.value,
         },
         price: handleCalcPrice(time[0].$d.getTime(), time[1].$d.getTime(), roomData?.roomPrice),
-        room: roomData,
+        room: { ...roomData, roomId: roomId },
         status: 'done',
         orderTime: { from: time[0].$d.getTime(), to: time[1].$d.getTime() },
       };
 
       setIsSubmitLoading(true);
       handleSendData(orderObj).then(() => {
-        ToastSuccess(
-          'Đặt phòng thành công, bạn có thể kiểm tra trong danh sách phòng đã đặt ',
-          5000
-        );
+        ToastSuccess('Đặt phòng thành công, bạn có thể xem thông tin đơn hàng ngay bây giờ', 4000);
         setIsSubmitLoading(false);
         handleToggleTippy();
+        navigate(`/booked`);
       });
     } else {
       setIsDatePickerError(true);

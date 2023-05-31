@@ -1,10 +1,10 @@
-import { Fragment, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 
 import classNames from 'classnames/bind';
 
-import { Grid, Skeleton, Stack } from '@mui/material';
-
-import { handleGetData } from '../../utils/database';
+import { onValue } from 'firebase/database';
+import { handleGetData, handleGetDataRef } from '../../utils/database';
 
 import { onAuthStateChanged } from 'firebase/auth';
 import { auth } from '../../firebase';
@@ -22,20 +22,30 @@ function Booked() {
     const bookedPath = `users/${uid}/orders`;
     const bookedList = await handleGetData(bookedPath).then((snapshot) => snapshot.val());
 
-    bookedList && setBookedList(bookedList);
+    setBookedList(bookedList);
   };
 
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
       if (user) {
-        handleGetBookedList(user.uid);
+        setUid(user.uid);
+        const orderRef = handleGetDataRef(`users/${user.uid}/orders`);
+        onValue(orderRef, () => {
+          handleGetBookedList(user.uid);
+        });
       }
     });
   }, []);
 
   return (
     <div className={cx('booked__wrapper')}>
-      <h3>{bookedList ? 'Danh sách phòng đã đặt' : 'Bạn chưa đặt phòng nào'}</h3>
+      <h3>
+        {bookedList ? (
+          'Danh sách phòng đã đặt'
+        ) : (
+          <Link to={'/bookings'}>Bạn chưa có đơn đặt phòng, nhấp vào đây để đặt phòng ngay</Link>
+        )}
+      </h3>
       {bookedList &&
         Object.keys(bookedList).map((bookedKey) => (
           <BookedItem key={`booked__booked__item__${bookedKey}`} bookedId={bookedKey} />

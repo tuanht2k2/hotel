@@ -44,7 +44,7 @@ function UserDropdown({ children }) {
       placement="bottom"
       render={() => (
         <div className={cx('sidebar__item__tippy--dropdown-wrapper')}>
-          <Link to={'/profile'} className={cx('tippy--dropdown__item__wrapper')}>
+          <Link to={''} className={cx('tippy--dropdown__item__wrapper')}>
             <div className={cx('tippy--dropdown__item__icon__wrapper')}>
               <FontAwesomeIcon icon={faUser} />
             </div>
@@ -64,7 +64,7 @@ function UserDropdown({ children }) {
             </div>
             <div className={cx('tippy--dropdown__item__title')}>Phòng đã đặt</div>
           </Link>
-          <Link to={'/settings'} className={cx('tippy--dropdown__item__wrapper')}>
+          <Link to={''} className={cx('tippy--dropdown__item__wrapper')}>
             <div className={cx('tippy--dropdown__item__icon__wrapper')}>
               <FontAwesomeIcon icon={faGear} />
             </div>
