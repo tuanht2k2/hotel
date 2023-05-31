@@ -4,8 +4,8 @@ import {
   AllOrders,
   AllRooms,
   AddRoom,
-  ManageOrders,
   Profile,
+  Amenity,
 } from '../pages/Admin/AdminLayout/Content';
 
 const routes = [
@@ -50,9 +50,9 @@ const routes = [
     layout: AdminLayout,
   },
   {
-    path: '/admin/manage-orders',
+    path: '/admin/amenity',
     type: 'admin',
-    element: <ManageOrders />,
+    element: <Amenity />,
     layout: AdminLayout,
   },
   {

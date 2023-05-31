@@ -25,7 +25,7 @@ const items = [
   ]),
   getItem("Quản lí đơn hàng", "sub2", <AppstoreOutlined />, [
     getItem(<Link to={"/admin/all-orders"}>Tất cả đơn hàng</Link>, "3"),
-    getItem(<Link to={"/admin/manage-orders"}>Quản lí tiện nghi</Link>, "4"),
+    getItem(<Link to={"/admin/amenity"}>Quản lí tiện nghi</Link>, "4"),
   ]),
   getItem("Quản lí hồ sơ", "sub3", <UserOutlined />, [
     getItem(<Link to={"/admin/profile"}>Trang cá nhân</Link>, "5"),

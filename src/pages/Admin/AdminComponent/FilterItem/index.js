@@ -12,6 +12,7 @@ const FilterItem = ({
   titleSelect1 = "Room Type",
   titleSelect2 = "Room Rank",
   isHasChildren,
+  placeholder = "Type to search by room name"
 }) => {
   return (
     <div>
@@ -19,7 +20,7 @@ const FilterItem = ({
         <Col span={isHasChildren ? 8 : 24} style={{ marginRight: "20px" }}>
           <Title level={5}>{filterItemTitle}</Title>
           <Search
-            placeholder="Type to search by room name"
+            placeholder={placeholder}
             allowClear
             enterButton="Search"
             size="medium"

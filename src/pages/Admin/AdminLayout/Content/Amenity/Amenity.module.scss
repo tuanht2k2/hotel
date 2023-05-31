@@ -1,0 +1,21 @@
+.amenity--container {
+    margin-bottom: 40px;
+    .amenity--title {
+      padding: 20px;
+      border-radius: 20px;
+    }
+    .amenity--body,
+    .amenity--title {
+      margin: 40px 40px 0 40px;
+      box-shadow:
+      /* offset-x | offset-y | blur-radius | spread-radius | color */ 0px
+          2px 2px 0px hsla(0, 0%, 0%, 0.14),
+        0px 3px 1px -2px hsla(0, 0%, 0%, 0.12),
+        0px 1px 5px 0px hsla(0, 0%, 0%, 0.2);
+    }
+    .amenity--body {
+      padding: 10px;
+      border-radius: 30px;
+    }
+  }
+  
