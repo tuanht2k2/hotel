@@ -13,7 +13,6 @@ import { handleSetData } from '../../utils/database';
 
 import images from '../../assets/images';
 import style from './SignUp.module.scss';
-import { onAuthStateChanged } from 'firebase/auth';
 
 const cx = classNames.bind(style);
 
@@ -208,6 +207,7 @@ function SignUp() {
                       label={fieldData.label}
                       type={fieldData.type}
                       helperText={fieldData.helperText}
+                      autoComplete={false}
                       value={fieldData.value}
                       onFocus={() => {
                         handleFocusInput(field);

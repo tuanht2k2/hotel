@@ -29,7 +29,7 @@ function Header() {
     {
       title: 'Trang chủ',
       icon: <FontAwesomeIcon icon={faHome} />,
-      to: '/home',
+      to: '/',
     },
     {
       title: 'Đặt phòng',
@@ -64,7 +64,7 @@ function Header() {
 
   return isLoaded ? (
     <div className={cx('header__wrapper')}>
-      <Link to={'/home'} className={cx('header__logo__wrapper')}>
+      <Link to={'/'} className={cx('header__logo__wrapper')}>
         <img src={images.logo} className={cx('header__logo__img')} />
       </Link>
       {HEADER.map((item, index) => {
@@ -73,10 +73,7 @@ function Header() {
           <TippyDropdown key={`header__tippy--dropdown${index}`}>
             <Link
               key={`header-item-${index}`}
-              className={cx(
-                'header__item',
-                item.to === path || (item.to === '/home' && path === '/') ? 'active' : ''
-              )}
+              className={cx('header__item', item.to === path ? 'active' : '')}
               to={item.to}
             >
               {item.icon && <div className={cx('item__icon__wrapper')}>{item.icon}</div>}

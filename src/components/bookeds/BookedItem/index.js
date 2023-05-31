@@ -3,16 +3,43 @@ import { useEffect, useState } from 'react';
 import classNames from 'classnames/bind';
 
 import { Grid, Skeleton, Stack } from '@mui/material';
+import { Button } from 'antd';
 
-import { handleGetData } from '../../../utils/database';
+import { handleGetData, handleRemoveData } from '../../../utils/database';
 import { handleGetFormatTime } from '../../../utils/time';
 
 import style from './BookedItem.module.scss';
+import { onValue } from 'firebase/database';
+import { ToastSuccess } from '../../../utils/toast';
 
 const cx = classNames.bind(style);
 
 function BookedItem({ bookedId }) {
   const [bookedData, setBookedData] = useState(null);
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  const handleCancelBooked = (bookedId, bookedData) => {
+    if (!bookedData) return;
+
+    const orderPath = `orders/${bookedId}`;
+    const roomOrderPath = `admin/create-room/rooms/${bookedData.room.roomId}/orders/${bookedId}`;
+    const userOrderPath = `users/${bookedData.user.uid}/orders/${bookedId}`;
+
+    Promise.all([
+      handleRemoveData(orderPath),
+      handleRemoveData(roomOrderPath),
+      handleRemoveData(userOrderPath),
+    ]).then(() => {
+      setIsDeleting(false);
+      ToastSuccess('Hủy đơn thành công', 2000);
+    });
+  };
+
+  const handleCheckCancelExpired = (time) => {
+    const timeDiff = time - Date.now();
+    const dateDiff = Math.floor(timeDiff / 86000000);
+    return dateDiff < 3;
+  };
 
   const handleGetBookedData = async (bookedId) => {
     const bookedData = await handleGetData(`orders/${bookedId}`).then((snapshot) => snapshot.val());
@@ -83,6 +110,24 @@ function BookedItem({ bookedId }) {
               >
                 {bookedData.status === 'done' ? 'Thành công' : 'Đã hủy/ bị xóa'}
               </div>
+            </div>
+            <div className={cx('booked__item__details__button__wrapper')}>
+              <Button
+                type="primary"
+                danger
+                loading={isDeleting}
+                disabled={handleCheckCancelExpired(bookedData.orderTime?.from)}
+                onClick={() => {
+                  if (!handleCheckCancelExpired(bookedData.orderTime?.from)) {
+                    setIsDeleting(true);
+                    handleCancelBooked(bookedId, bookedData);
+                  }
+                }}
+              >
+                {handleCheckCancelExpired(bookedData.orderTime?.from)
+                  ? 'Không thể hủy đơn'
+                  : 'Hủy đơn ( Chúng tôi hỗ trợ hủy đơn trước 3 ngày)'}
+              </Button>
             </div>
           </div>
         </div>

@@ -43,9 +43,10 @@ function Home() {
               Luxury & Comfort Our services and wonders of MKTHM
             </div>
             <div className={cx('home__content--intro--right__content')}>
-              The concept and service of the best luxury hotels in VietName in our sophisticated
-              Urban Double and Unique Junior Suite rooms, with the possibility of enjoying a
-              furnished terrace in our Double Urban Loft and Unique Junior Loft Suite.
+              MKTHM Luxury là phân khúc khách sạn hạng sang cao cấp nhất của MKTHM, nằm ở các thành
+              phố lớn và trung tâm du lịch nổi tiếng trong nước và quốc tế. Quy mô lớn và đẳng cấp
+              khác biệt, MKTHM Luxury mang đến cho khách hàng không gian nghỉ dưỡng tuyệt vời mang
+              đậm giá trị Việt đến từ dịch vụ tận tâm và văn hóa ẩm thực bản địa độc đáo
             </div>
             <a href="#booking" className={cx('home__content--intro--right-btn')}>
               <Button type="primary" ghost danger>
