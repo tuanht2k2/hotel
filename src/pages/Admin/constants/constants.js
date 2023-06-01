@@ -30,27 +30,6 @@ export const ALL_ORDER_COLUMN = [
     render: (user) => {
       return user.firstName.concat(" ", user.lastName);
     },
-    filters: [
-      {
-        text: "Tuan",
-        value: "Tuan",
-      },
-      {
-        text: "Category 1",
-        value: "Category 1",
-      },
-      {
-        text: "Category 2",
-        value: "Category 2",
-      },
-    ],
-    filterMode: "tree",
-    filterSearch: true,
-    onFilter: (value, record) =>
-      record.user.firstName
-        .concat(" ", record.user.lastName)
-        .toLowerCase()
-        .includes(value),
     width: "12%",
   },
   {
@@ -81,7 +60,7 @@ export const ALL_ORDER_COLUMN = [
     title: "Room Type",
     dataIndex: "room",
     render: (room) => {
-      return room.roomType;
+      return room.roomType.charAt(0).toUpperCase() + room.roomType.slice(1);
     },
     filters: [
       {
@@ -101,16 +80,21 @@ export const ALL_ORDER_COLUMN = [
   },
   {
     title: "Price",
-    dataIndex: "room",
-    render: (room) => {
-      return room.roomPrice;
+    dataIndex: "price",
+    render: (price) => {
+      return price.toLocaleString();
     },
-    sorter: (a, b) => a.price - b.price,
+    sorter: (a, b) => {
+      return a.price - b.price;
+    },
     width: "10%",
   },
   {
     title: "Status",
     dataIndex: "status",
+    render: (status) => {
+      return status.charAt(0).toUpperCase() + status.slice(1);
+    },
     filters: [
       {
         text: "Done",

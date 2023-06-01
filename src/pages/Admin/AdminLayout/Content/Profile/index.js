@@ -14,6 +14,7 @@ import { ToastError, ToastSuccess } from "../../../../../utils/toast";
 let cx = classNames.bind(styles);
 
 const Profile = () => {
+  const [initialData,setInitialData] = useState(null)
   const [formData, setFormData] = useState(null);
   const [uid, setUid] = useState(null);
   const [openFormModal, setOpenFormModal] = useState(false);
@@ -21,7 +22,6 @@ const Profile = () => {
 
   const onCreate = async (values) => {
     // if(values.password !== )
-    console.log(values);
     if (values.newPassword !== values.confirmNewPassword) {
       ToastError(
         "Your password and confirm password is incompatible . Please try again !"
@@ -112,16 +112,16 @@ const Profile = () => {
     const user = snapshot.val();
     if (user) {
       // get user data and pass it to form data
-      setFormData({
+      setInitialData({
         firstName: {
-          label: "Họ",
+          label: "First name",
           value: user.firstName,
           type: "text",
           isDisabled: isDisabled,
           xs: 6,
         },
         lastName: {
-          label: "Tên",
+          label: "Last name",
           value: user.lastName,
           type: "text",
           isDisabled: isDisabled,
@@ -135,21 +135,65 @@ const Profile = () => {
           xs: 12,
         },
         phoneNumber: {
-          label: "Số điện thoại",
+          label: "Phone number",
           value: user.phoneNumber,
           type: "text",
           isDisabled: isDisabled,
           xs: 12,
         },
         address: {
-          label: "Địa chỉ",
+          label: "Address",
           value: user.address,
           type: "text",
           isDisabled: isDisabled,
           xs: 12,
         },
         password: {
-          label: "Mật khẩu",
+          label: "Password",
+          value: "*********",
+          type: "password",
+          isDisabled: isDisabled,
+          xs: 12,
+        },
+      });
+      setFormData({
+        firstName: {
+          label: "First name",
+          value: user.firstName,
+          type: "text",
+          isDisabled: isDisabled,
+          xs: 6,
+        },
+        lastName: {
+          label: "Last name",
+          value: user.lastName,
+          type: "text",
+          isDisabled: isDisabled,
+          xs: 6,
+        },
+        email: {
+          label: "Email",
+          value: user.email,
+          type: "text",
+          isDisabled: isDisabled,
+          xs: 12,
+        },
+        phoneNumber: {
+          label: "Phone number",
+          value: user.phoneNumber,
+          type: "text",
+          isDisabled: isDisabled,
+          xs: 12,
+        },
+        address: {
+          label: "Address",
+          value: user.address,
+          type: "text",
+          isDisabled: isDisabled,
+          xs: 12,
+        },
+        password: {
+          label: "Password",
           value: "*********",
           type: "password",
           isDisabled: isDisabled,
@@ -251,14 +295,22 @@ const Profile = () => {
               <Row className={cx("profile__button--group")}>
                 <Col span={24}>
                   <Button
+                    disabled={isDisabled}
                     type="primary"
                     onClick={() => {
                       handleSubmit(formData);
                     }}
                   >
-                    Thay đổi
+                    Change
                   </Button>
-                  <Button style={{ marginLeft: 10 }} type="primary" onClick = {()=>{setFormData(formData)}}>
+                  <Button
+                    disabled={isDisabled}
+                    style={{ marginLeft: 10 }}
+                    type="primary"
+                    onClick={() => {
+                      setFormData(initialData);
+                    }}
+                  >
                     Reset
                   </Button>
                   <Button

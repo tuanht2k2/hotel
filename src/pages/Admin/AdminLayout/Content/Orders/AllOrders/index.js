@@ -2,7 +2,6 @@ import { Col, Row, Table } from "antd";
 import classNames from "classnames/bind";
 import styles from "./AllOrders.module.scss";
 import { QuestionCircleOutlined } from "@ant-design/icons";
-import { useQuery } from "react-query";
 import {
   handleGetData,
   handleGetDataRef,
@@ -24,17 +23,25 @@ const onChange = (pagination, filters, sorter, extra) => {
 const AllOrders = () => {
   const [changeData, setChangeData] = useState([]);
   const [isSearch, setIsSearch] = useState(false);
+  const [listOrders, setListOrders] = useState([]);
+
   const getAllOrders = async () => {
     try {
-      const res = await handleGetData("/orders");
-      const dataOrder = res.val();
-      const ordersResult = [];
-      for (let order in res.val()) {
-        dataOrder[order].orderId = order;
-        ordersResult.push(dataOrder[order]);
-      }
-      setChangeData(ordersResult);
-      return ordersResult;
+      const roomsPath = `/orders`;
+      const roomsRef = handleGetDataRef(roomsPath);
+      onValue(roomsRef, async () => {
+        const res = await handleGetData("/orders");
+        const dataOrder = res.val();
+        const ordersResult = [];
+        const dataOrders = [];
+        for (let order in res.val()) {
+          dataOrder[order].orderId = order;
+          ordersResult.push(dataOrder[order]);
+          dataOrders.push(dataOrder[order]);
+        }
+        setListOrders(dataOrders);
+        setChangeData(ordersResult);
+      });
     } catch (error) {
       console.log(error);
       ToastError("Opps. Something went wrong. Remove order failed !!");
@@ -42,14 +49,11 @@ const AllOrders = () => {
     }
   };
 
-  const query = useQuery("all-orders", getAllOrders);
-  const { isLoading, data: listOrders } = query;
+  // const query = useQuery("all-orders", getAllOrders);
+  // const { isLoading, data: listOrders } = query;
 
   useEffect(() => {
-    const roomsPath = `/orders`;
-    const roomsRef = handleGetDataRef(roomsPath);
-    onValue(roomsRef, ()=>{
-      getAllOrders()});
+    getAllOrders();
   }, []);
 
   const onSearchByName = (value) => {
@@ -87,15 +91,18 @@ const AllOrders = () => {
       <div className={cx("all__order--body")}>
         <Row>
           <Col span={24}>
-            {!isLoading ? (
-              <Table
-                columns={ALL_ORDER_COLUMN}
-                dataSource={isSearch ? changeData : listOrders}
-                onChange={onChange}
-              />
-            ) : (
+            {/* {!isLoading ? */}
+            {/* ( */}
+            <Table
+              columns={ALL_ORDER_COLUMN}
+              dataSource={isSearch ? changeData : listOrders}
+              onChange={onChange}
+            />
+            {/* )  */}
+            {/* : (
               <Loading borderRadius={30} />
-            )}
+            ) */}
+            {/* } */}
           </Col>
         </Row>
       </div>

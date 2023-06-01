@@ -12,10 +12,10 @@ export const ToastSuccess = (message, time) => {
     progress: undefined,
     closeOnClick: false,
     theme: "dark",
-    style : {
-      fontSize : 16,
-      color : '#fff'
-    }
+    style: {
+      fontSize: 16,
+      color: "#fff",
+    },
   });
 };
 
@@ -30,7 +30,30 @@ export const ToastError = (message, time) => {
     transition: Bounce,
     progress: undefined,
     closeOnClick: false,
-    theme: "light"
+    theme: "dark",
+    style: {
+      fontSize: 16,
+      color: "#fff",
+    },
+  });
+};
+
+export const ToastWarning = (message, time) => {
+  toast["warning"](message || "warning", {
+    position: "top-right",
+    autoClose: time || 2000,
+    hideProgressBar: false,
+    pauseOnHover: true,
+    draggable: false,
+    closeButton: true,
+    transition: Bounce,
+    progress: undefined,
+    closeOnClick: false,
+    theme: "dark",
+    style: {
+      fontSize: 16,
+      color: "#fff",
+    },
   });
 };
 
