@@ -51,7 +51,7 @@ function UserDropdown({ children }) {
             <div className={cx('tippy--dropdown__item__title')}>Thông tin cá nhân</div>
           </Link>
           {user.role === 'admin' && (
-            <Link to={'/admin'} className={cx('tippy--dropdown__item__wrapper')}>
+            <Link to={'/admin/all-rooms'} className={cx('tippy--dropdown__item__wrapper')}>
               <div className={cx('tippy--dropdown__item__icon__wrapper')}>
                 <FontAwesomeIcon icon={faPeopleRoof} />
               </div>

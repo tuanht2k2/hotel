@@ -13,8 +13,7 @@ const ItemTitle = ({ textContent = "", title = "", icon }) => {
     <div className={cx("item__title--container")}>
       <Row>
         <Col span={24}>
-          <Title level={3}>{title}</Title>
-          {icon}
+          <Title level={3}>{title}<span style={{margin: '0 6px'}}>{icon}</span></Title> 
         </Col>
       </Row>
       <Typography>

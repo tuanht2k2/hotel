@@ -8,7 +8,6 @@ import {
   Row,
   Col,
   Select,
-  Button,
   Image,
 } from "antd";
 import { useEffect, useState } from "react";
@@ -21,11 +20,15 @@ import {
   handleRemoveData,
   handleUpdateData,
 } from "../../../../../../utils/database";
-import { ToastError, ToastSuccess } from "../../../../../../utils/toast";
+import {
+  ToastError,
+  ToastSuccess,
+  ToastWarning,
+} from "../../../../../../utils/toast";
 import Loading from "../../../../AdminComponent/Loading/Loading";
-import { useQuery } from "react-query";
 import ItemTitle from "../../../../AdminComponent/ItemTitle";
 import { onValue } from "firebase/database";
+import { isEqual } from "lodash";
 const { Search } = Input;
 let cx = classNames.bind(styles);
 
@@ -112,8 +115,8 @@ const AllRooms = () => {
     }
   };
 
-  const query = useQuery("all-rooms", getListRooms);
-  const { isLoading } = query;
+  // const query = useQuery("all-rooms", getListRooms);
+  // const { isLoading } = query;
   const onSearchByName = (value) => {
     const filterRooms = changeData.filter((room) => {
       if (room.roomName.toLowerCase().includes(value)) {
@@ -173,12 +176,17 @@ const AllRooms = () => {
           ...item,
           ...row,
         });
-        delete newData[index].roomImage;
-        await handleUpdateData(
-          `/admin/create-room/rooms/${roomIds[index]}`,
-          newData[index]
-        );
-        ToastSuccess("Update room information success", 2000);
+        if (isEqual(data, newData)) {
+          ToastWarning("Your data is not changed !");
+          return;
+        } else {
+          delete newData[index].roomImage;
+          await handleUpdateData(
+            `/admin/create-room/rooms/${roomIds[index]}`,
+            newData[index]
+          );
+          ToastSuccess("Update room information success", 2000);
+        }
         setEditingKey("");
       } else {
         newData.push(row);
@@ -209,6 +217,9 @@ const AllRooms = () => {
     {
       title: "Room Type",
       dataIndex: "roomType",
+      render: (roomType) => {
+        return roomType.charAt(0).toUpperCase() + roomType.slice(1);
+      },
       width: "10%",
       editable: false,
     },
@@ -221,6 +232,9 @@ const AllRooms = () => {
     {
       title: "Room Rank",
       dataIndex: "roomRank",
+      render: (roomRank) => {
+        return roomRank.charAt(0).toUpperCase() + roomRank.slice(1);
+      },
       width: "10%",
       editable: false,
     },
@@ -229,6 +243,9 @@ const AllRooms = () => {
       dataIndex: "roomPrice",
       width: "10%",
       editable: true,
+      render: (price) => {
+        return Number(price).toLocaleString();
+      },
     },
     {
       title: "Room Description",
@@ -274,9 +291,12 @@ const AllRooms = () => {
       render: (record) => {
         return (
           <Typography.Link
-            onClick={() => {
+            onClick={async () => {
               try {
-                handleRemoveData(`/admin/create-room/rooms/${record.roomId}`);
+                await handleRemoveData(`/admin/create-room/rooms/${record.roomId}`);
+                await Object.keys(record.orders).forEach((orderId) => {
+                  handleRemoveData(`/admin/create-room/orders/${orderId}`);
+                });
                 ToastSuccess("Remove room successfully");
               } catch (error) {
                 ToastError("Opps. Something went wrong. Remove room failed");
@@ -315,7 +335,7 @@ const AllRooms = () => {
       ></ItemTitle>
       <div className={cx("all__room--main")}>
         <div className={cx("all__rooms--title")}>
-          <Row>
+          <Row style={{ display: "flex", justifyContent: "center" }}>
             <Col span={8} style={{ marginRight: "20px" }}>
               <Title level={5}>What are you looking for ?</Title>
               <Search
@@ -327,7 +347,7 @@ const AllRooms = () => {
               />
             </Col>
 
-            <Col span={6} style={{ marginRight: "20px" }}>
+            <Col span={7} style={{ marginRight: "20px" }}>
               <Title level={5}>Room Type</Title>
               <Select
                 style={{ width: "100%" }}
@@ -355,7 +375,7 @@ const AllRooms = () => {
               />
             </Col>
 
-            <Col span={6} style={{ marginRight: "20px" }}>
+            <Col span={7} style={{ marginRight: "20px" }}>
               <Title level={5}>Room Rank</Title>
               <Select
                 style={{ width: "100%" }}
@@ -382,24 +402,13 @@ const AllRooms = () => {
                 ]}
               />
             </Col>
-
-            <Col span={2} style={{ alignSelf: "flex-end" }}>
-              <Button
-                style={{
-                  width: "100%",
-                  backgroundColor: "#1677ff",
-                  color: "#fff",
-                }}
-              >
-                Search
-              </Button>
-            </Col>
           </Row>
         </div>
         <div className={cx("all__rooms--form")}>
           <Title level={5}>Room Summary</Title>
           <Form form={form} component={false}>
-            {!isLoading ? (
+            {/* {console.log(data)} */}
+            {
               <Table
                 components={{
                   body: {
@@ -414,9 +423,10 @@ const AllRooms = () => {
                   onChange: cancel,
                 }}
               />
-            ) : (
-              <Loading />
-            )}
+              // : (
+              //   <Loading />
+              // )
+            }
           </Form>
         </div>
       </div>
