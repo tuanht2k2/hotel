@@ -24,9 +24,11 @@ const AllOrders = () => {
   const [changeData, setChangeData] = useState([]);
   const [isSearch, setIsSearch] = useState(false);
   const [listOrders, setListOrders] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   const getAllOrders = async () => {
     try {
+      setIsLoading(true);
       const roomsPath = `/orders`;
       const roomsRef = handleGetDataRef(roomsPath);
       onValue(roomsRef, async () => {
@@ -41,6 +43,7 @@ const AllOrders = () => {
         }
         setListOrders(dataOrders);
         setChangeData(ordersResult);
+        setIsLoading(false);
       });
     } catch (error) {
       console.log(error);
@@ -49,15 +52,13 @@ const AllOrders = () => {
     }
   };
 
-  // const query = useQuery("all-orders", getAllOrders);
-  // const { isLoading, data: listOrders } = query;
-
   useEffect(() => {
     getAllOrders();
   }, []);
 
-  const onSearchByName = (value) => {
+  const onSearchByName = async (value) => {
     setIsSearch(true);
+    setIsLoading(true);
     const filterRooms = listOrders.filter((order) => {
       if (
         order.user.firstName
@@ -68,6 +69,9 @@ const AllOrders = () => {
         return true;
       }
     });
+    await setTimeout(() => {
+      setIsLoading(false);
+    }, 1000);
     setChangeData(filterRooms);
   };
 
@@ -91,18 +95,15 @@ const AllOrders = () => {
       <div className={cx("all__order--body")}>
         <Row>
           <Col span={24}>
-            {/* {!isLoading ? */}
-            {/* ( */}
-            <Table
-              columns={ALL_ORDER_COLUMN}
-              dataSource={isSearch ? changeData : listOrders}
-              onChange={onChange}
-            />
-            {/* )  */}
-            {/* : (
-              <Loading borderRadius={30} />
-            ) */}
-            {/* } */}
+            {!isLoading ? (
+              <Table
+                columns={ALL_ORDER_COLUMN}
+                dataSource={isSearch ? changeData : listOrders}
+                onChange={onChange}
+              />
+            ) : (
+              <Loading />
+            )}
           </Col>
         </Row>
       </div>

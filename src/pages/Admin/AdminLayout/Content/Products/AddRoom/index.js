@@ -13,14 +13,18 @@ import {
   Modal,
   message,
 } from "antd";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import classNames from "classnames/bind";
 import styles from "./AddRoom.module.scss";
-import { handlePushData } from "../../../../../../utils/database";
+import {
+  handleGetData,
+  handlePushData,
+} from "../../../../../../utils/database";
 import { v4 as uuidv4 } from "uuid";
 import uploadFile from "../../../../../../utils/storage";
 import { ToastError, ToastSuccess } from "../../../../../../utils/toast";
 import ItemTitle from "../../../../AdminComponent/ItemTitle";
+import Loading from "../../../../AdminComponent/Loading/Loading";
 
 let cx = classNames.bind(styles);
 
@@ -58,11 +62,14 @@ const beforeUpload = (file) => {
 };
 
 const AddRoom = () => {
+  const [form] = Form.useForm();
   const [componentDisabled, setComponentDisabled] = useState(false);
   const [previewOpen, setPreviewOpen] = useState(false);
   const [previewImage, setPreviewImage] = useState("");
   const [previewTitle, setPreviewTitle] = useState("");
   const [fileList, setFileList] = useState([]);
+  const [amenity, setAmenity] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleCancel = () => setPreviewOpen(false);
   const handlePreview = async (file) => {
@@ -94,6 +101,21 @@ const AddRoom = () => {
     </div>
   );
 
+  const getListAmenity = async () => {
+    const listAmenities = await handleGetData("/amenity");
+    const amenityResults = [];
+    for (const amenity in listAmenities.val()) {
+      if (Object.hasOwnProperty.call(listAmenities.val(), amenity)) {
+        const element = listAmenities.val()[amenity];
+        amenityResults.push(element);
+      }
+    }
+    setAmenity(amenityResults);
+  };
+  useEffect(() => {
+    getListAmenity();
+  }, []);
+
   const handleChange = async ({ fileList: newFileList }) => {
     setFileList(newFileList);
   };
@@ -109,11 +131,22 @@ const AddRoom = () => {
         await listImage.push({ imageId: uuidv4(), imageUrl: res });
         value.roomImage = listImage;
         if (index === fileList.length - 1) {
+          if (!value.roomDesc) {
+            value.roomDesc = "There's no description about this room";
+          }
           value.key = uuidv4();
           value.roomCreatedAt = JSON.stringify(new Date());
-          handlePushData("/admin/create-room/rooms", value);
-          ToastSuccess("Add new room success", 2000);
+          value.roomAmenity.forEach((amenity) => {
+            amenity = amenity.charAt(1).toUpperCase() + amenity.slice(0, 1);
+          });
+          setIsLoading(true);
         }
+        handlePushData("/admin/create-room/rooms", value);
+        setTimeout(() => {
+          ToastSuccess("Add new room success", 2000);
+          setIsLoading(false);
+        }, 500);
+        form.resetFields();
       });
     } catch (error) {
       console.log(error);
@@ -121,220 +154,246 @@ const AddRoom = () => {
     }
   };
   return (
-    <div className={cx("add__room--container")}>
-      <ItemTitle
-        title="Add new room"
-        textContent="This is the page to create new room"
-      />
-      <div className={cx("add__room--content")}>
-        <Row className={cx('room__content--title')}>
+    <>
+      {!isLoading ? (
+        <div className={cx("add__room--container")}>
           <ItemTitle
-            title="Field Information"
-            textContent="You must fill in this fields to create new room"
+            title="Add new room"
+            textContent="This is the page to create new room"
           />
-        </Row>
+          <div className={cx("add__room--content")}>
+            <Row className={cx("room__content--title")}>
+              <ItemTitle
+                title="Field Information"
+                textContent="You must fill in this fields to create new room"
+              />
+            </Row>
 
-        <Row>
-          <Col span={24}>
-            <div className={cx("room__content--main")}>
-              <Form
-                labelCol={{
-                  span: 24,
-                }}
-                wrapperCol={{
-                  span: 20,
-                }}
-                layout="horizontal"
-                disabled={componentDisabled}
-                style={{
-                  maxWidth: "100%",
-                }}
-                onFinish={onFinish}
-                name="formName"
-              >
-                <Row>
-                  <Col span={18}>
-                    <Form.Item
-                      required
-                      name={"roomName"}
-                      label="Room Name"
-                      rules={[
-                        {
-                          required: true,
-                          message: "Room Name is required",
-                        },
-                      ]}
-                    >
-                      <Input
-                        name="roomName"
-                        placeholder="Type your room name"
-                      />
-                    </Form.Item>
-                    <Form.Item
-                      required
-                      name={"roomType"}
-                      label="Room Type"
-                      rules={[
-                        {
-                          required: true,
-                          message: "Room Type is required",
-                        },
-                      ]}
-                    >
-                      <Radio.Group name="roomType">
-                        <Radio value="single"> Single </Radio>
-                        <Radio value="double"> Double </Radio>
-                      </Radio.Group>
-                    </Form.Item>
-                    <Form.Item
-                      required
-                      name="roomAmenity"
-                      label="Room Amenity"
-                      rules={[
-                        {
-                          required: false,
-                          message: "Please select your favourite colors!",
-                          type: "array",
-                        },
-                      ]}
-                    >
-                      <Select
-                        mode="multiple"
-                        placeholder="Please select favourite colors"
-                      >
-                        <Select.Option value="red">Red</Select.Option>
-                        <Select.Option value="green">Green</Select.Option>
-                        <Select.Option value="blue">Blue</Select.Option>
-                      </Select>
-                    </Form.Item>
-                    <Form.Item
-                      required
-                      name={"roomRank"}
-                      label="Room Rank"
-                      rules={[
-                        {
-                          required: true,
-                          message: "Room Rank is required",
-                        },
-                      ]}
-                    >
-                      <Radio.Group name="roomRank">
-                        <Radio value="normal">Normal</Radio>
-                        <Radio value="superior"> Superior </Radio>
-                      </Radio.Group>
-                    </Form.Item>
+            <Row>
+              <Col span={24}>
+                <div className={cx("room__content--main")}>
+                  <Form
+                    labelCol={{
+                      span: 24,
+                    }}
+                    wrapperCol={{
+                      span: 20,
+                    }}
+                    layout="horizontal"
+                    disabled={componentDisabled}
+                    style={{
+                      maxWidth: "100%",
+                    }}
+                    onFinish={onFinish}
+                    name="formName"
+                    form={form}
+                  >
                     <Row>
-                      <Col span={6}>
+                      <Col span={18}>
                         <Form.Item
                           required
-                          name={"roomCreatedAt"}
-                          label="Create at"
+                          name={"roomName"}
+                          label="Room Name"
                           rules={[
                             {
                               required: true,
-                              message: "Room Created At is required",
+                              message: "Room Name is required",
                             },
                           ]}
                         >
-                          <DatePicker
-                            name="roomCreatedAt"
-                            style={{ width: "80%" }}
+                          <Input
+                            name="roomName"
+                            placeholder="Type your room name"
                           />
                         </Form.Item>
-                      </Col>
-                      <Col span={6}>
                         <Form.Item
                           required
-                          label="Room Price"
-                          name={"roomPrice"}
+                          name={"roomType"}
+                          label="Room Type"
                           rules={[
                             {
                               required: true,
-                              message: "Room Price is required",
+                              message: "Room Type is required",
                             },
                           ]}
                         >
-                          <InputNumber
-                            style={{ width: "100%" }}
-                            name="roomPrice"
-                            placeholder="Type your room price"
+                          <Radio.Group name="roomType">
+                            <Radio value="single"> Single </Radio>
+                            <Radio value="double"> Double </Radio>
+                          </Radio.Group>
+                        </Form.Item>
+                        <Form.Item
+                          required
+                          name="roomAmenity"
+                          label="Room Amenity"
+                          rules={[
+                            {
+                              required: false,
+                              message: "Please select your favourite colors!",
+                              type: "array",
+                            },
+                          ]}
+                        >
+                          <Select
+                            mode="multiple"
+                            placeholder="Please select favourite colors"
+                            // notFoundContent={"There is no amenity available"}
+                          >
+                            {amenity?.map((amenityItem) => {
+                              return (
+                                <Select.Option value={amenityItem.amenityName}>
+                                  {amenityItem.amenityName}
+                                </Select.Option>
+                              );
+                            })}
+                          </Select>
+                        </Form.Item>
+                        <Form.Item
+                          required
+                          name={"roomRank"}
+                          label="Room Rank"
+                          rules={[
+                            {
+                              required: true,
+                              message: "Room Rank is required",
+                            },
+                          ]}
+                        >
+                          <Radio.Group name="roomRank">
+                            <Radio value="normal">Normal</Radio>
+                            <Radio value="superior"> Superior </Radio>
+                          </Radio.Group>
+                        </Form.Item>
+                        <Row>
+                          <Col span={6}>
+                            <Form.Item
+                              required
+                              name={"roomCreatedAt"}
+                              label="Create at"
+                              rules={[
+                                {
+                                  required: true,
+                                  message: "Room Created At is required",
+                                },
+                              ]}
+                            >
+                              <DatePicker
+                                name="roomCreatedAt"
+                                style={{ width: "80%" }}
+                              />
+                            </Form.Item>
+                          </Col>
+                          <Col span={6}>
+                            <Form.Item
+                              required
+                              label="Room Price"
+                              name={"roomPrice"}
+                              rules={[
+                                {
+                                  required: true,
+                                  message: "Room Price is required",
+                                },
+                              ]}
+                            >
+                              <InputNumber
+                                style={{ width: "100%" }}
+                                name="roomPrice"
+                                placeholder="Type your room price"
+                                formatter={(value) => {
+                                  return value.toLocaleString();
+                                }}
+                              />
+                            </Form.Item>
+                          </Col>
+                        </Row>
+
+                        <Form.Item name={"roomDesc"} label="Room Description">
+                          <TextArea
+                            placeholder="Type your room description"
+                            name="roomDesc"
+                            rows={4}
                           />
+                        </Form.Item>
+                        <Row>
+                          <Col
+                            span={24}
+                            style={{
+                              display: "flex",
+                              justifyContent: "center",
+                            }}
+                          >
+                            <button className={cx("add__room--btn")}>
+                              Create New Room
+                            </button>
+                            <button
+                              className={cx("add__room--btn")}
+                              type="reset"
+                            >
+                              Reset
+                            </button>
+                          </Col>
+                        </Row>
+                      </Col>
+                      <Col span={6}>
+                        <Form.Item
+                          label="Add Room Image"
+                          valuePropName="fileList"
+                          getValueFromEvent={normFile}
+                          style={{ width: "100%" }}
+                          name={"roomImage"}
+                        >
+                          <Upload
+                            listType="picture-card"
+                            fileList={fileList}
+                            onPreview={handlePreview}
+                            onChange={handleChange}
+                            name="roomImage"
+                            beforeUpload={beforeUpload}
+                            customRequest={dummyRequest}
+                          >
+                            {fileList.length >= 8 ? null : uploadButton}
+                          </Upload>
                         </Form.Item>
                       </Col>
                     </Row>
-
-                    <Form.Item name={"roomDesc"} label="Room Description">
-                      <TextArea
-                        placeholder="Type your room description"
-                        name="roomDesc"
-                        rows={4}
-                      />
-                    </Form.Item>
-                    <Row>
-                      <Col
-                        span={24}
-                        style={{ display: "flex", justifyContent: "center" }}
-                      >
-                        <button className={cx("add__room--btn")}>
-                          Create New Room
-                        </button>
+                  </Form>
+                  <Row>
+                    <Col span={24}>
+                      <Col span={12}>
+                        <Checkbox
+                          checked={componentDisabled}
+                          onChange={(e) =>
+                            setComponentDisabled(e.target.checked)
+                          }
+                        >
+                          Disabled
+                        </Checkbox>
                       </Col>
-                    </Row>
-                  </Col>
-                  <Col span={6}>
-                    <Form.Item
-                      label="Add Room Image"
-                      valuePropName="fileList"
-                      getValueFromEvent={normFile}
-                      style={{ width: "100%" }}
-                      name={"roomImage"}
-                    >
-                      <Upload
-                        listType="picture-card"
-                        fileList={fileList}
-                        onPreview={handlePreview}
-                        onChange={handleChange}
-                        name="roomImage"
-                        beforeUpload={beforeUpload}
-                        customRequest={dummyRequest}
-                      >
-                        {fileList.length >= 8 ? null : uploadButton}
-                      </Upload>
-                    </Form.Item>
-                  </Col>
-                </Row>
-              </Form>
-              <Row>
-                <Col span={24}>
-                  <Col span={12}>
-                    <Checkbox
-                      checked={componentDisabled}
-                      onChange={(e) => setComponentDisabled(e.target.checked)}
-                    >
-                      Disabled
-                    </Checkbox>
-                  </Col>
-                </Col>
-              </Row>
-            </div>
-          </Col>
-        </Row>
-      </div>
-      <Modal
-        open={previewOpen}
-        title={previewTitle}
-        footer={null}
-        onCancel={handleCancel}
-      >
-        <img
-          alt="example"
-          style={{
-            width: "100%",
-          }}
-          src={previewImage}
-        />
-      </Modal>
-    </div>
+                    </Col>
+                  </Row>
+                </div>
+              </Col>
+            </Row>
+          </div>
+          <Modal
+            open={previewOpen}
+            title={previewTitle}
+            footer={null}
+            onCancel={handleCancel}
+          >
+            <img
+              alt="example"
+              style={{
+                width: "100%",
+              }}
+              src={previewImage}
+            />
+          </Modal>
+        </div>
+      ) : (
+        <Loading heightBlock={"90vh"} />
+      )}
+    </>
   );
 };
-export default () => <AddRoom />;
+export default AddRoom;

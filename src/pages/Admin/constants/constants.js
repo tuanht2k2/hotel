@@ -1,7 +1,7 @@
-import { Typography } from "antd";
 import { Link } from "react-router-dom";
 import { handleRemoveData } from "../../../utils/database";
 import { ToastError, ToastSuccess } from "../../../utils/toast";
+import ConfirmModal from "../AdminComponent/ConfirmModal";
 
 export const ADMIN_HEADER_ITEMS = [
   {
@@ -116,19 +116,22 @@ export const ALL_ORDER_COLUMN = [
     width: "10%",
     render: (record) => {
       return (
-        <Typography.Link
-          onClick={() => {
+        <ConfirmModal
+          contentConfirm={"Are you sure to delete this order ?"}
+          okTextConfirm={"Yes, delete it"}
+          cancelTextConfirm={"Cancel"}
+          onOkConfirm={async () => {
             try {
               handleRemoveData(`/orders/${record.orderId}`);
-              ToastSuccess("Remove room successfully");
+              ToastSuccess("Remove order successfully");
             } catch (error) {
-              ToastError("Opps. Something went wrong. Remove room failed");
+              ToastError("Opps. Something went wrong. Remove order failed");
               throw new Error(error);
             }
           }}
         >
           Delete
-        </Typography.Link>
+        </ConfirmModal>
       );
     },
   },
@@ -138,26 +141,26 @@ export const ALL_AMENITY_COLUMN = [
   {
     title: "Amenity Id",
     dataIndex: "amenityId",
-    width: "15%",
-  },
-  {
-    title: "Created By",
-    dataIndex: "createdBy",
-    width: "15%",
+    width: "20%",
   },
   {
     title: "Amenity Name",
     dataIndex: "amenityName",
-    // render: (amenity) => {
-    //   return amenity.amenityName;
-    // },
+    render: (amenityName) => {
+      return amenityName;
+    },
     width: "15%",
   },
   {
+    title: "Created By",
+    dataIndex: "_createdBy",
+    width: "10%",
+  },
+  {
     title: "Room Type",
-    dataIndex: "room",
-    render: (amenity) => {
-      return amenity.roomType;
+    dataIndex: "roomType",
+    render: (roomType) => {
+      return roomType.charAt(0).toUpperCase() + roomType.slice(1);
     },
     filters: [
       {
@@ -173,50 +176,39 @@ export const ALL_AMENITY_COLUMN = [
     filterSearch: true,
     onFilter: (value, record) =>
       record.room.roomType.toLowerCase().startsWith(value),
-    width: "20%",
-  },
-  {
-    title: "Status",
-    dataIndex: "status",
-    filters: [
-      {
-        text: "Done",
-        value: "done",
-      },
-      {
-        text: "Cancel",
-        value: "cancel",
-      },
-    ],
-    onFilter: (value, record) => record.status.toLowerCase().startsWith(value),
-    filterSearch: true,
     width: "10%",
   },
   {
     title: "Created At",
-    dataIndex: "createdAt",
+    dataIndex: "_createdAt",
     width: "15%",
+    render: (createdAt) => {
+      return createdAt.split("-").reverse().join("/");
+    },
   },
   {
-    title: "Delete Room",
+    title: "Delete Amenity",
     dataIndex: "",
     key: "x",
     width: "10%",
     render: (record) => {
       return (
-        <Typography.Link
-          onClick={() => {
+        <ConfirmModal
+          contentConfirm={"Are you sure to delete this amenity ?"}
+          okTextConfirm={"Yes, delete it"}
+          cancelTextConfirm={"Cancel"}
+          onOkConfirm={async () => {
             try {
-              handleRemoveData(`/orders/${record.orderId}`);
-              ToastSuccess("Remove room successfully");
+              await handleRemoveData(`/amenity/${record.key}`);
+              ToastSuccess("Remove amenity successfully");
             } catch (error) {
-              ToastError("Opps. Something went wrong. Remove room failed");
+              ToastError("Opps. Something went wrong. Remove amenity failed");
               throw new Error(error);
             }
           }}
         >
           Delete
-        </Typography.Link>
+        </ConfirmModal>
       );
     },
   },

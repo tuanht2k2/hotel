@@ -29,6 +29,7 @@ import Loading from "../../../../AdminComponent/Loading/Loading";
 import ItemTitle from "../../../../AdminComponent/ItemTitle";
 import { onValue } from "firebase/database";
 import { isEqual } from "lodash";
+import ConfirmModal from "../../../../AdminComponent/ConfirmModal";
 const { Search } = Input;
 let cx = classNames.bind(styles);
 
@@ -73,9 +74,11 @@ const AllRooms = () => {
   const [editingKey, setEditingKey] = useState("");
   const [roomIds, setRoomIds] = useState([]);
   const [changeData, setChangeData] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   const getListRooms = async () => {
     try {
+      setIsLoading(true);
       const roomsPath = `admin/create-room/rooms/`;
       const roomsRef = handleGetDataRef(roomsPath);
       onValue(roomsRef, async () => {
@@ -109,24 +112,29 @@ const AllRooms = () => {
         setData([...dataRooms]);
         setChangeData([...dataRooms]);
         setRoomIds([...listKeys]);
+        setIsLoading(false);
       });
     } catch (error) {
       console.log(error);
     }
   };
 
-  // const query = useQuery("all-rooms", getListRooms);
-  // const { isLoading } = query;
-  const onSearchByName = (value) => {
+  const onSearchByName = async (value) => {
+    setIsLoading(true);
     const filterRooms = changeData.filter((room) => {
       if (room.roomName.toLowerCase().includes(value)) {
         return true;
       }
     });
+    await setTimeout(() => {
+      setIsLoading(false);
+    }, 1000);
     setData(filterRooms);
   };
 
-  const onChangeRoom = (value) => {
+  const onChangeRoom = async (value) => {
+    console.log(value);
+    setIsLoading(true);
     const results = changeData.filter((room) => {
       if (!value) {
         return room;
@@ -138,6 +146,9 @@ const AllRooms = () => {
         return true;
       }
     });
+    await setTimeout(() => {
+      setIsLoading(false);
+    }, 1000);
     setData(results);
   };
 
@@ -228,6 +239,12 @@ const AllRooms = () => {
       dataIndex: "roomAmenity",
       width: "10%",
       editable: false,
+      render: (amenity) => {
+        if (amenity.length <= 3) {
+          return amenity.join(", ");
+        }
+        return amenity.slice(0, 3).join(", ") + "...";
+      },
     },
     {
       title: "Room Rank",
@@ -260,14 +277,16 @@ const AllRooms = () => {
         const editable = isEditing(record);
         return editable ? (
           <span>
-            <Typography.Link
-              onClick={() => save(record.key)}
-              style={{
-                marginRight: 8,
+            <ConfirmModal
+              contentConfirm={"Are you sure to modify this room ?"}
+              okTextConfirm={"Modify"}
+              cancelTextConfirm={"Cancel"}
+              onOkConfirm={() => {
+                save(record.key);
               }}
             >
               Save
-            </Typography.Link>
+            </ConfirmModal>
             <Onconfirm title="Sure to cancel?" onConfirm={cancel}>
               <p style={{ color: "#1677ff", display: "inline-block" }}>
                 Cancel
@@ -290,27 +309,48 @@ const AllRooms = () => {
       key: "x",
       render: (record) => {
         return (
-          <Typography.Link
-            onClick={async () => {
+          <ConfirmModal
+            contentConfirm={"Are you sure to delete this room ?"}
+            okTextConfirm={"Yes, delete it"}
+            cancelTextConfirm={"Cancel"}
+            onOkConfirm={async () => {
               try {
-                await handleRemoveData(`/admin/create-room/rooms/${record.roomId}`);
-                await Object.keys(record.orders).forEach((orderId) => {
-                  handleRemoveData(`/admin/create-room/orders/${orderId}`);
-                });
+                setIsLoading(true);
+                if (record?.orders) {
+                  await Object.keys(record?.orders).forEach(async (orderId) => {
+                    const res = await handleGetData(`/orders/${orderId}`);
+                    const user = await handleGetData(
+                      `/users/${res.val()?.user.uid}`
+                    );
+                    const data = user.val();
+                    delete data?.orders[orderId];
+                    await handleUpdateData(
+                      `/users/${res.val()?.user.uid}`,
+                      data
+                    );
+                    await handleRemoveData(`orders/${orderId}`);
+                  });
+                }
+                await handleRemoveData(
+                  `/admin/create-room/rooms/${record.roomId}`
+                );
+                await setTimeout(() => {
+                  setIsLoading(false);
+                }, 500);
                 ToastSuccess("Remove room successfully");
               } catch (error) {
                 ToastError("Opps. Something went wrong. Remove room failed");
+                console.log(error);
                 throw new Error(error);
               }
             }}
           >
             Delete
-          </Typography.Link>
+          </ConfirmModal>
         );
       },
     },
   ];
-
   const mergedColumns = columns.map((col) => {
     if (!col.editable) {
       return col;
@@ -407,8 +447,7 @@ const AllRooms = () => {
         <div className={cx("all__rooms--form")}>
           <Title level={5}>Room Summary</Title>
           <Form form={form} component={false}>
-            {/* {console.log(data)} */}
-            {
+            {!isLoading ? (
               <Table
                 components={{
                   body: {
@@ -423,10 +462,9 @@ const AllRooms = () => {
                   onChange: cancel,
                 }}
               />
-              // : (
-              //   <Loading />
-              // )
-            }
+            ) : (
+              <Loading />
+            )}
           </Form>
         </div>
       </div>

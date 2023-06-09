@@ -1,16 +1,23 @@
-import { Col, Row, Table } from "antd";
+import { Button, Col, Row, Table } from "antd";
 import classNames from "classnames/bind";
 import { QuestionCircleOutlined } from "@ant-design/icons";
-import { useQuery } from "react-query";
 import { useEffect, useState } from "react";
-import { onValue } from "firebase/database";
 import { ALL_AMENITY_COLUMN } from "../../../constants/constants";
 import FilterItem from "../../../AdminComponent/FilterItem";
 import Loading from "../../../AdminComponent/Loading/Loading";
 import ItemTitle from "../../../AdminComponent/ItemTitle";
 import styles from "./Amenity.module.scss";
-import { ToastError } from "../../../../../utils/toast";
-import { handleGetData, handleGetDataRef } from "../../../../../utils/database";
+import { ToastError, ToastSuccess } from "../../../../../utils/toast";
+import moment from "moment";
+import {
+  handleGetData,
+  handleGetDataRef,
+  handlePushData,
+} from "../../../../../utils/database";
+import FormCreate from "./formCreate";
+import { v4 as uuidv4 } from "uuid";
+import { auth } from "../../../../../firebase";
+import { onValue } from "firebase/database";
 let cx = classNames.bind(styles);
 
 const onChange = (pagination, filters, sorter, extra) => {
@@ -18,19 +25,46 @@ const onChange = (pagination, filters, sorter, extra) => {
 };
 
 const Amenity = () => {
-  const [changeData, setChangeData] = useState([]);
-  const [isSearch, setIsSearch] = useState(false);
-  const getAllOrders = async () => {
+  const [listAmenity, setListAmenity] = useState([]);
+  const [changeAmenity, setChangeAmenity] = useState([]);
+  const [openModalCreateAmenity, setOpenModalCreateAmenity] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const onCreate = async (values) => {
     try {
-      const res = await handleGetData("/orders");
-      const dataOrder = res.val();
-      const ordersResult = [];
-      for (let order in res.val()) {
-        dataOrder[order].orderId = order;
-        ordersResult.push(dataOrder[order]);
-      }
-      setChangeData(ordersResult);
-      return ordersResult;
+      const userInfo = await handleGetData(`/users/${auth.currentUser.uid}`);
+      values.amenityId = uuidv4();
+      values._createdAt = moment(new Date()).format("YYYY-MM-DD");
+      values._createdBy = userInfo.val().lastName;
+      await handlePushData(`/amenity`, values);
+      ToastSuccess("Create amenity successfully");
+      setOpenModalCreateAmenity(false);
+    } catch (error) {
+      ToastError("Opps. Something went wrong. Create amenity failed");
+      throw new Error(error);
+    }
+  };
+  const onCancel = () => {
+    setOpenModalCreateAmenity(false);
+  };
+
+  const getAllAmenity = async () => {
+    const ratingsPath = `/amenity`;
+    const ratingsRef = handleGetDataRef(ratingsPath);
+    setIsLoading(true);
+    try {
+      onValue(ratingsRef, async () => {
+        const res = await handleGetData("/amenity");
+        const dataAmenity = res.val();
+        const amenityResult = [];
+        for (let amenity in res.val()) {
+          dataAmenity[amenity].key = amenity;
+          amenityResult.push(dataAmenity[amenity]);
+        }
+        setListAmenity(amenityResult);
+        setChangeAmenity(amenityResult);
+        setIsLoading(false);
+      });
     } catch (error) {
       console.log(error);
       ToastError("Opps. Something went wrong. Remove order failed !!");
@@ -38,30 +72,21 @@ const Amenity = () => {
     }
   };
 
-  const query = useQuery("all-orders", getAllOrders);
-  const { isLoading, data: listOrders } = query;
-
   useEffect(() => {
-    const roomsPath = `/orders`;
-    const roomsRef = handleGetDataRef(roomsPath);
-    onValue(roomsRef, () => {
-      getAllOrders();
-    });
+    getAllAmenity();
   }, []);
 
-  const onSearchByName = (value) => {
-    setIsSearch(true);
-    const filterRooms = listOrders.filter((order) => {
-      if (
-        order.user.firstName
-          .concat(" ", order.user.lastName)
-          .toLowerCase()
-          .includes(value.toLowerCase())
-      ) {
+  const onSearchByName = async (value) => {
+    setIsLoading(true);
+    const filterRooms = await changeAmenity.filter((amenity) => {
+      if (amenity.amenityName.toLowerCase().includes(value.toLowerCase())) {
         return true;
       }
     });
-    setChangeData(filterRooms);
+    await setTimeout(() => {
+      setIsLoading(false);
+    }, 1000);
+    setListAmenity(filterRooms);
   };
   return (
     <div className={cx("amenity--container")}>
@@ -78,7 +103,17 @@ const Amenity = () => {
           placeholder="Type to search by name amenity"
           titleSelect2="Order status"
           onSearchByName={onSearchByName}
-        />
+        >
+          <Button
+            style={{ marginLeft: 10 }}
+            type="primary"
+            onClick={() => {
+              setOpenModalCreateAmenity(true);
+            }}
+          >
+            Create new amenity
+          </Button>
+        </FilterItem>
       </div>
       <div className={cx("amenity--body")}>
         <Row>
@@ -86,15 +121,22 @@ const Amenity = () => {
             {!isLoading ? (
               <Table
                 columns={ALL_AMENITY_COLUMN}
-                dataSource={isSearch ? changeData : listOrders}
+                dataSource={listAmenity}
                 onChange={onChange}
               />
             ) : (
-              <Loading borderRadius={30} />
+              <Loading />
             )}
           </Col>
         </Row>
       </div>
+      <FormCreate
+        open={openModalCreateAmenity}
+        title="Create new amenity"
+        okText="Create"
+        onCancel={onCancel}
+        onCreate={onCreate}
+      />
     </div>
   );
 };
