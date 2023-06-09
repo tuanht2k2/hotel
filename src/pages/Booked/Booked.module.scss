@@ -1,0 +1,19 @@
+.booked__wrapper {
+  padding: 30px;
+  background-color: var(--gray-0);
+  min-height: calc(100vh - 50px);
+
+  h3 {
+    font-family: EncodeSans-Semibold;
+
+    text-align: center;
+
+    a {
+      color: var(--text-color-9);
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+}

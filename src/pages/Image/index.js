@@ -64,7 +64,7 @@ function Image() {
           >
             <FontAwesomeIcon icon={faXmark} />
           </span>
-          <Link to={'/home'} className={cx('image--control__left--brand--icon__wrapper')}>
+          <Link to={'/'} className={cx('image--control__left--brand--icon__wrapper')}>
             <img className={cx('logo--img')} src={images.logo} />
           </Link>
         </div>

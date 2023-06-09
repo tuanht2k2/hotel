@@ -1,0 +1,29 @@
+.profile--container {
+  .profile__toggle--switch {
+    display: flex;
+    align-items: center;
+    margin: 20px 0 20px 40px;
+  }
+  .profile--content {    
+    .profile__content--title {
+      background-color: #f8f9fb;
+      width: 100%;
+      margin: 40px 0;
+    }
+    .profile--content--main {
+      padding: 0 40px;
+      margin-bottom: 40px;
+      .profile__button--group {
+        margin-top: 40px;
+      }
+    }
+  }
+
+  .profile__form {
+    padding-right: 20px;
+
+    p {
+      color: red;
+    }
+  }
+}

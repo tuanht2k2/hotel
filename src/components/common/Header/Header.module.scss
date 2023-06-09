@@ -32,6 +32,10 @@
     border-left: 1px solid red;
   }
 
+  &.active * {
+    color: orangered;
+  }
+
   button span {
     font-family: EncodeSans-SemiBold;
   }
@@ -54,7 +58,7 @@
   object-fit: cover;
 }
 
-.item--title {
+.item__title {
   margin-left: 10px;
   font-family: EncodeSans-Bold;
 }

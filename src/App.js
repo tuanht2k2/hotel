@@ -1,39 +1,45 @@
-import { useEffect, useState } from 'react';
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import routes from "./routes";
+import "antd/dist/reset.css";
+import "./App.css";
+import { useEffect, useState } from "react";
 import { useDispatch } from 'react-redux';
-
 import { onAuthStateChanged } from 'firebase/auth';
 import { auth } from './firebase';
-
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import routes from './routes';
 
 import { signInAction } from './actions/user';
 
 import './App.css';
 import { Grid, Skeleton, Stack } from '@mui/material';
+import { handleGetData } from './utils/database';
 
 function App() {
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState({});
   const [isPageLoaded, setIsPageLoaded] = useState(false);
   const dispatch = useDispatch();
 
-  useEffect(() => {
-    let stateChanged;
+  const handleGetUserData = async (uid) => {
+    const userPath = `users/${uid}`;
+    const snapshot = await handleGetData(userPath);
+    const user = snapshot.val();
+    if (user) {
+      setUser(user);
 
+      const signIn = signInAction(user.uid, user.role === 'admin' ? 'admin' : 'client');
+      dispatch(signIn);
+    }
+  };
+
+  useEffect(() => {
     onAuthStateChanged(auth, (user) => {
       if (user) {
-        setUser(user.uid);
+        handleGetUserData(user.uid).then(() => {
+          setIsPageLoaded(true);
+        });
+      } else {
         setIsPageLoaded(true);
-        stateChanged = true;
-
-        const signIn = signInAction(user.uid);
-        dispatch(signIn);
       }
     });
-
-    if (!stateChanged) {
-      setIsPageLoaded(true);
-    }
 
     return () => {};
   }, []);
@@ -46,7 +52,11 @@ function App() {
 
           const element = Layout ? <Layout>{route.element}</Layout> : route.element;
 
-          return route.type === 'public' || user ? (
+          const isSignedIn = Object.keys(user).length > 0;
+
+          return route.type === 'public' ||
+            (route.type === 'private' && isSignedIn) ||
+            (route.type === 'admin' && user.role === 'admin') ? (
             <Route key={`page-${index}`} path={route.path} element={element} />
           ) : (
             <Route key={`page-${index}`} path={route.path} element={<Navigate to="/sign-in" />} />

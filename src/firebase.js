@@ -4,21 +4,21 @@ import { getDatabase } from 'firebase/database';
 import { getStorage } from 'firebase/storage';
 import { getAnalytics } from 'firebase/analytics';
 import { getAuth } from 'firebase/auth';
+const {REACT_APP_API_KEY,REACT_APP_AUTH_DOMAIN,REACT_APP_DB_URL,REACT_APP_PROJECT_ID,REACT_APP_STORAGE_BUCKET,REACT_APP_MESSAGING_SENDER_ID,REACT_APP_APP_ID,REACT_APP_MESUREMENT_ID} = process.env
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
-  apiKey: 'AIzaSyBhQjNkibui3IF9mzJYY0I1a7buqN-t5WI',
-  authDomain: 'hotel-management-8143a.firebaseapp.com',
-  databaseURL:
-    'https://hotel-management-8143a-default-rtdb.asia-southeast1.firebasedatabase.app',
-  projectId: 'hotel-management-8143a',
-  storageBucket: 'hotel-management-8143a.appspot.com',
-  messagingSenderId: '698656224703',
-  appId: '1:698656224703:web:69bd3ed68522cea5cddd0a',
-  measurementId: 'G-R7SVPZKT2Q',
+  apiKey: REACT_APP_API_KEY,
+  authDomain: REACT_APP_AUTH_DOMAIN,
+  databaseURL: REACT_APP_DB_URL,
+  projectId: REACT_APP_PROJECT_ID,
+  storageBucket: REACT_APP_STORAGE_BUCKET,
+  messagingSenderId: REACT_APP_MESSAGING_SENDER_ID,
+  appId: REACT_APP_APP_ID,
+  measurementId: REACT_APP_MESUREMENT_ID,
 };
 
 // Initialize Firebase

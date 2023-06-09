@@ -1,0 +1,112 @@
+.adminPage-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  top: 0;
+  left: 0;
+  position: fixed;
+  width: 100%;
+  min-height: 56px;
+  max-height: 56px;
+  z-index: 6666;
+  background-color: #fff;
+  box-shadow: 0 1px 4px 0 rgb(74 74 78 / 12%);
+  border-radius: 20px 20px 0 0;
+}
+
+.adminPage-header-left {
+  display: flex;
+  align-items: center;
+  .right__icon {
+    margin: 10px;
+  }
+  h2,.right__icon {
+    opacity: 0.6;
+    color: #000;
+  }
+  h2:hover {
+    opacity: 1;
+  }
+  .nav__title {
+    h2 {
+        opacity: 1;
+    }
+    display: flex;
+    align-items: center;
+  }
+}
+
+.adminPage-header-left h1 {
+  margin: 2px 0 0 5px;
+  color: #000;
+  font: inherit;
+  font-size: 18px;
+}
+.adminPage-header-left h2 {
+  font-size: 18px;
+  margin-top: 10px;
+}
+
+.adminPage-header-left .svg1 {
+  width: 25.79px;
+  fill: #ee4d2d;
+  color: #e84f20;
+  margin-left: 16px;
+}
+
+.adminPage-header-left .svg2 {
+  width: 16px;
+  margin: 0 8px;
+  color: #000;
+}
+
+.adminPage-header-right {
+  display: flex;
+  align-items: center;
+  padding: 8px 16px 8px 0;
+  .adminPage__notification {
+    font-size: 20px;
+  }
+  .admin__header--info {
+    span {
+      margin: 0 2px;
+      font-size: 16px;
+    }
+  }
+}
+
+.adminPage-header-right img {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-right: 8px;
+}
+
+.adminPage-header-right .header-right-profile {
+  display: flex;
+  align-items: center;
+  // border-radius: 250px;
+  //     margin: 20px 10px;
+  //    padding: 0 20px;
+}
+
+.admin__header--btn {
+  color: #000 !important;
+  &:hover,
+  &:active {
+    border: none !important;
+  }
+}
+.adminPage-header-right .header-right-profile p {
+  margin-top: 10px;
+  font-size: 14px;
+}
+
+.adminPage-header-right .header-right-profile:hover {
+  color: #999;
+}
+
+.adminPage-header-right a {
+  color: black;
+}

@@ -1,0 +1,24 @@
+.all__rooms--container {
+  display: flex;
+  flex-direction: column;
+  .all__room--main {
+    padding: 15px 40px;
+  }
+
+  .all__rooms--form,
+  .all__rooms--title {
+    margin: 30px 0;
+    width: 100%;
+    box-shadow: 0px 2px 2px 0px hsla(0, 0%, 0%, 0.14),
+      0px 3px 1px -2px hsla(0, 0%, 0%, 0.12),
+      0px 1px 5px 0px hsla(0, 0%, 0%, 0.2);
+  }
+  .all__rooms--form {
+    padding: 20px 40px;
+    border-radius: 30px;
+  }
+  .all__rooms--title {
+    padding: 20px;
+    border-radius: 20px;
+  }
+}

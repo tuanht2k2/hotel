@@ -1,0 +1,69 @@
+.add__room--container {
+  border-radius: 10px;
+
+  .add__room--content {
+    margin: 40px 0;
+    .room__content--title {
+      background-color: #f8f9fb;
+      width: 100%;
+    }
+    .room__content--main {
+      padding: 30px 40px;
+    }
+    .add__room--btn {
+      display: block;
+      border-radius: 20px;
+      padding: 0.5em 1.2em;
+      color: #00000077;
+      font: 400 1.5em /1 "Raleway", sans-serif;
+      letter-spacing: 2px;
+      background: #eee;
+      border: none;
+      cursor: pointer;
+      transition: 0.7s cubic-bezier(0.65, 0.69, 0.35, 1.27);
+      margin: 0 10px;
+    }
+
+    .add__room--btn:hover {
+      box-shadow: 0 0 20px #1677ff;
+      color: #fff;
+      background: #1677ff;
+      animation: jiggle 1.7s ease-in;
+      animation-iteration-count: 1;
+    }
+
+    @keyframes jiggle {
+      38%,
+      52% {
+        transform: scale(1, 1);
+      }
+      40% {
+        transform: scale(1.1, 0.9);
+      }
+      46% {
+        transform: scale(0.9, 1.1) translate(0, -5px);
+      }
+      49% {
+        transform: scale(1, 1) translate(0, -3px);
+      }
+    }
+
+    @keyframes up {
+      0% {
+        opacity: 0;
+        transform: translateY(-100px);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  }
+
+  .add__room--upload {
+    .ant-upload-select {
+      height: 200px !important;
+      width: 100% !important;
+    }
+  }
+}

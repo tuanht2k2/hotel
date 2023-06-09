@@ -1,0 +1,124 @@
+:root {
+  --text-color-highlight-succes: rgb(146, 224, 58);
+  --text-color-highlight-error: #ba9d99;
+}
+
+.booked__item__main__wrapper {
+  width: 100%;
+  background-color: white;
+  border-radius: 10px;
+  box-shadow: var(--box-shadow-1);
+  overflow: hidden;
+
+  & + & {
+    margin-top: 20px;
+  }
+
+  .booked__item__wrapper {
+    width: 100%;
+    height: 100%;
+    border-radius: 10px;
+    border: 1px solid orangered;
+    padding: 5px 10px;
+    display: flex;
+    align-items: center;
+
+    .booked__item__img__wrapper {
+      flex: 1;
+      width: 100%;
+      height: 100%;
+      border: 1px solid orangered;
+      border-radius: 10px;
+      background-color: black;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+
+      .booked__item__img {
+        height: 280px;
+        object-fit: contain;
+        overflow: hidden;
+      }
+    }
+
+    .booked__item__details {
+      margin-left: 20px;
+      flex: 3;
+
+      * {
+        // font-family: EncodeSans-Semibold;
+        font-size: 16px;
+      }
+
+      .booked__item__details__item {
+        padding: 5px;
+        display: flex;
+        align-items: center;
+        font-family: EncodeSans-Semibold;
+        color: var(--text-color-9);
+
+        .booked__item__details__item__value {
+          margin-left: 10px;
+          font-size: 17px;
+          color: orangered;
+
+          &.success {
+            color: var(--text-color-highlight-succes);
+          }
+
+          &.isDeleted {
+            color: var(--text-color-highlight-error);
+          }
+        }
+      }
+
+      .booked__item__details__button__wrapper {
+        margin-top: 10px;
+
+        * {
+          font-family: EncodeSans-Semibold;
+          font-size: 14px;
+        }
+      }
+    }
+
+    .booked__item__button__wrapper {
+      flex: 1;
+    }
+  }
+
+  @media screen and (max-width: 1300px) {
+    .booked__item__wrapper {
+      .booked__item__img__wrapper {
+        flex: 2;
+      }
+    }
+  }
+
+  @media screen and (max-width: 820px) {
+    .booked__item__wrapper {
+      flex-direction: column;
+      align-items: flex-start;
+
+      .booked__item__details {
+        margin: 0;
+      }
+      .booked__item__img__wrapper {
+        .booked__item__img {
+          height: 320px;
+        }
+      }
+    }
+  }
+
+  @media screen and (max-width: 400px) {
+    .booked__item__wrapper {
+      .booked__item__img__wrapper {
+        .booked__item__img {
+          height: 220px;
+        }
+      }
+    }
+  }
+}

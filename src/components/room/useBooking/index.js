@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 
 import classNames from 'classnames/bind';
+import { useNavigate } from 'react-router-dom';
 
 import HeadlessTippy from '@tippyjs/react/headless';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -8,12 +9,12 @@ import { faSpinner, faXmark } from '@fortawesome/free-solid-svg-icons';
 
 import { Button, Grid, TextField } from '@mui/material';
 import { DatePicker, Space } from 'antd';
-import dayjs from 'dayjs';
 
 import { onAuthStateChanged } from 'firebase/auth';
 import { auth } from '../../../firebase';
 
 import { handleGetData, handlePushData, handleSetData } from '../../../utils/database';
+import { ToastSuccess } from '../../../utils/toast';
 
 import images from '../../../assets/images';
 
@@ -30,9 +31,24 @@ function useBooking(roomId, roomData) {
   const [isVisible, setIsVisible] = useState(false);
   const [isDatePickerError, setIsDatePickerError] = useState(false);
   const [isSubmitLoading, setIsSubmitLoading] = useState(false);
-  console.log(roomData);
+
+  const navigate = useNavigate();
+
   const handleToggleTippy = () => {
     setIsVisible((prev) => !prev);
+  };
+
+  const handleCheckTimeExist = (time) => {
+    const orders = roomData.orders;
+
+    if (!orders) return false;
+
+    const result = Object.keys(orders).find((orderKey) => {
+      const { orderTime } = orders[orderKey];
+      return time >= orderTime?.from && time <= orderTime?.to;
+    });
+
+    return result;
   };
 
   const handleGetUserData = async (uid) => {
@@ -40,6 +56,7 @@ function useBooking(roomId, roomData) {
     const snapshot = await handleGetData(userPath);
     const user = snapshot.val();
     if (user) {
+      // get user data and pass it to form data
       setForm({
         firstName: {
           label: 'Họ',
@@ -80,12 +97,29 @@ function useBooking(roomId, roomData) {
     }
   };
 
-  const handleSendData = async (orderData) => {
-    const orderKey = await handlePushData(`orders`, orderData).then((snapshot) => snapshot.key);
-    const roomPath = `admin/create-room/rooms/${roomId}/orders/${orderKey}`;
-    handleSetData(roomPath, '');
+  // calculate the price of order
+  const handleCalcPrice = (start, end, unitPrice) => {
+    const timeOrder = end - start;
+
+    const daysOrder = Math.floor(timeOrder / 86400000);
+
+    return daysOrder * unitPrice;
   };
 
+  // send order to database
+  const handleSendData = async (orderData) => {
+    const orderKey = await handlePushData(`orders`, orderData).then((snapshot) => snapshot.key);
+
+    const roomPath = `admin/create-room/rooms/${roomId}/orders/${orderKey}`;
+    handleSetData(roomPath, {
+      orderTime: { from: time[0].$d.getTime(), to: time[1].$d.getTime() },
+    });
+
+    const userPath = `users/${uid}/orders/${orderKey}`;
+    handleSetData(userPath, '');
+  };
+
+  // called when click submit
   const handleSubmit = () => {
     const isFormValid = Object.keys(form).length > 0 && time;
     if (isFormValid) {
@@ -100,13 +134,18 @@ function useBooking(roomId, roomData) {
           email: form.email.value,
           address: form.address.value,
         },
-        room: roomData,
+        price: handleCalcPrice(time[0].$d.getTime(), time[1].$d.getTime(), roomData?.roomPrice),
+        room: { ...roomData, roomId: roomId },
+        status: 'done',
         orderTime: { from: time[0].$d.getTime(), to: time[1].$d.getTime() },
       };
 
       setIsSubmitLoading(true);
       handleSendData(orderObj).then(() => {
+        ToastSuccess('Đặt phòng thành công, bạn có thể xem thông tin đơn hàng ngay bây giờ', 4000);
         setIsSubmitLoading(false);
+        handleToggleTippy();
+        navigate(`/booked`);
       });
     } else {
       setIsDatePickerError(true);
@@ -171,14 +210,14 @@ function useBooking(roomId, roomData) {
               {/* date picker  */}
 
               <div className={cx('use__booking__content__date__picker__header')}>
-                Thời gian đặt phòng
+                Thời gian đặt phòng (Những ô có thể chọn là còn trống lịch)
               </div>
               <Space direction="vertical" size={15}>
                 <RangePicker
                   placeholder={['Từ ngày', 'Đến ngày']}
                   format="DD-MM-YYYY"
                   disabledDate={(current) => {
-                    return current < Date.now();
+                    return current < Date.now() || !!handleCheckTimeExist(current);
                   }}
                   value={time}
                   onChange={(value) => {
@@ -193,6 +232,18 @@ function useBooking(roomId, roomData) {
                   status={isDatePickerError ? 'error' : ''}
                 />
               </Space>
+              {time && (
+                <div className={cx('use__booking__content__order__price')}>
+                  Giá tiền:
+                  <div className={cx('use__booking__content__order__price__value')}>
+                    {`${handleCalcPrice(
+                      time[0].$d.getTime(),
+                      time[1].$d.getTime(),
+                      roomData?.roomPrice
+                    )} VNĐ (Thanh toán tại quầy lễ tân khi check out)`}
+                  </div>
+                </div>
+              )}
 
               {/* form control  */}
               <div className={cx('use__booking__content__button__btn')}>

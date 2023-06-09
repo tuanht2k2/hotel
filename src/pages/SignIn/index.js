@@ -131,7 +131,7 @@ function SignIn() {
 
   useEffect(() => {
     if (isSignedIn) {
-      navigate('/home', { replace: true });
+      navigate('/', { replace: true });
     }
 
     return () => {};
@@ -157,6 +157,7 @@ function SignIn() {
                     label={formData[field].label}
                     type={formData[field].type}
                     helperText={formData[field].helperText}
+                    autoComplete={false}
                     value={formData[field].value}
                     onFocus={() => {
                       handleFocusInput(field);
