@@ -132,7 +132,7 @@ const AddRoom = () => {
         value.roomImage = listImage;
         if (index === fileList.length - 1) {
           if (!value.roomDesc) {
-            value.roomDesc = "There's no description about this room";
+            value.roomDesc = "Hiện chưa có thông tin mô tả cho phòng này !";
           }
           value.key = uuidv4();
           value.roomCreatedAt = JSON.stringify(new Date());

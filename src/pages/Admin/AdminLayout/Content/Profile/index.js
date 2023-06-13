@@ -9,12 +9,17 @@ import { auth } from "../../../../../firebase";
 import { handleGetData, handleUpdateData } from "../../../../../utils/database";
 import { Grid, TextField } from "@mui/material";
 import ItemTitle from "../../../AdminComponent/ItemTitle";
-import { ToastError, ToastSuccess } from "../../../../../utils/toast";
+import {
+  ToastError,
+  ToastSuccess,
+  ToastWarning,
+} from "../../../../../utils/toast";
+import _ from "lodash";
 
 let cx = classNames.bind(styles);
 
 const Profile = () => {
-  const [initialData,setInitialData] = useState(null)
+  const [initialData, setInitialData] = useState(null);
   const [formData, setFormData] = useState(null);
   const [uid, setUid] = useState(null);
   const [openFormModal, setOpenFormModal] = useState(false);
@@ -27,6 +32,7 @@ const Profile = () => {
         "Your password and confirm password is incompatible . Please try again !"
       );
     }
+    ToastWarning('This function will be coming soon !')
     // await handleUpdateData(`/users/${uid}`, values);
     setOpenFormModal(false);
   };
@@ -216,8 +222,12 @@ const Profile = () => {
           phoneNumber: formData.phoneNumber.value,
           address: formData.address.value,
         };
-        await handleUpdateData(`/users/${uid}`, userData);
-        ToastSuccess("Change your information successfully !");
+        if (_.isEqual(formData, initialData)) {
+          ToastWarning("Your information is not changed !");
+        } else {
+          await handleUpdateData(`/users/${uid}`, userData);
+          ToastSuccess("Change your information successfully !");
+        }
       }
     } catch (error) {
       console.log(error);
